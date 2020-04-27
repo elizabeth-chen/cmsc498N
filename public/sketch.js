@@ -5,6 +5,9 @@
 // Keep track of our socket connection
 var socket;
 var users = [];
+var marks = [];
+var inCollision = false;
+var collisionTimer = 0;
 
 function preload(){
   cartR = loadImage('cartRight.png');
@@ -47,8 +50,12 @@ function setup() {
 
   socket.emit('start', data);
 
-  socket.on('heartbeat', function(data) {
+  socket.on('heartbeatUsers', function(data) {
     users = data;
+  });
+
+  socket.on('heartbeatMarks', function(data) {
+    marks = data;
   });
 }
 
@@ -67,15 +74,26 @@ function draw() {
 	x+=vx;
 	y+=vy;
 
+  //draw marks
+  for (var i = marks.length - 1; i >= 0; i--) {
+    fill(0,0,255);
+    ellipse(marks[i].x, marks[i].y, 100, 100);
+  }
+
   //draw all of the carts in the game
   for (var i = users.length - 1; i >= 0; i--) {
     var id = users[i].id;
     drawCart(users[i].x,users[i].y, users[i].dir);
 
     if (id != socket.id) {
-      if (collision(x,y,users[i].x,users[i].y)){
-        fill(0, 0, 255);
-        ellipse(users[i].x, users[i].y, 10, 10);
+      if (!inCollision && collision(x,y,users[i].x,users[i].y)){
+        var mark = {
+          x: x + 50,
+          y: y + 50,
+        };
+        socket.emit('new mark', mark);
+        inCollision = true;
+        collisionTimer = 0;
       }
     }
 
@@ -104,6 +122,10 @@ function draw() {
 
   //send this user's data to server
   socket.emit('update', data);
+  collisionTimer++;
+  if(collisionTimer > 20) {
+    inCollision = false;
+  }
 
 }
 
@@ -116,7 +138,7 @@ function drawCart(x, y, dir){
 
 //comment
 function collision(x1,y1,x2,y2) {
-  if(x1 >= x2-30 && x1 <= x2+30 && y1 >= y2-30 && y1 <= y2+30) {
+  if(x1 >= x2-50 && x1 <= x2+50 && y1 >= y2-50 && y1 <= y2+50) {
     return true;
   } else {
     return false;
