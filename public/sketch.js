@@ -114,6 +114,7 @@ function drawCart(x, y, dir){
     image(cartL,x,y, 100, 100);
 }
 
+//comment
 function collision(x1,y1,x2,y2) {
   if(x1 >= x2-30 && x1 <= x2+30 && y1 >= y2-30 && y1 <= y2+30) {
     return true;
