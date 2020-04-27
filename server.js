@@ -21,6 +21,7 @@ app.use(express.static('public'));
 
 
 var users = [];
+var marks = [];
 
 function User(id, x, y, dir) {
   this.id = id;
@@ -29,15 +30,22 @@ function User(id, x, y, dir) {
   this.dir = dir;
 }
 
+function Mark(x, y) {
+  this.x = x;
+  this.y = y;
+}
+
 // WebSocket Portion
 // WebSockets work with the HTTP server
 var io = require('socket.io')(server);
 
 setInterval(heartbeat, 33);
 
-//send out update to all the current clients of each user's location
+
+//send out update to all the current clients of each user's location and marks
 function heartbeat() {
-  io.sockets.emit('heartbeat', users);
+  io.sockets.emit('heartbeatUsers', users);
+  io.sockets.emit('heartbeatMarks', marks);
 }
 
 // Register a callback function to run when we have an individual connection
@@ -75,6 +83,12 @@ io.sockets.on('connection',
         user.dir = data.dir;
       }
 
+    });
+
+    //add mark
+    socket.on('new mark', function(data) {
+      var mark = new Mark(data.x, data.y);
+      marks.push(mark)
     });
 
 
