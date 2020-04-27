@@ -70,8 +70,15 @@ function draw() {
   //draw all of the carts in the game
   for (var i = users.length - 1; i >= 0; i--) {
     var id = users[i].id;
-
     drawCart(users[i].x,users[i].y, users[i].dir);
+
+    if (id != socket.id) {
+      if (collision(x,y,users[i].x,users[i].y)){
+        fill(0, 0, 255);
+        ellipse(users[i].x, users[i].y, 10, 10);
+      }
+    }
+
   }
 
   image(toilet, itemX,itemX, 100,75);
@@ -105,4 +112,13 @@ function drawCart(x, y, dir){
     image(cartR,x,y, 100, 100);
   else
     image(cartL,x,y, 100, 100);
+}
+
+function collision(x1,y1,x2,y2) {
+  if(x1 >= x2-30 && x1 <= x2+30 && y1 >= y2-30 && y1 <= y2+30) {
+    return true;
+  } else {
+    return false;
+  }
+
 }
