@@ -5,14 +5,18 @@
 // Keep track of our socket connection
 var socket;
 var users = [];
-var marks = [];
+var marks = [], marks_items = [];
+var supplies = [];
 var inCollision = false;
 var collisionTimer = 0;
+let corona;
 
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
-	toilet = loadImage('toilet.png');
+  toilet = loadImage('toilet.png');
+  soap = loadImage('soap.png');
+  corona = loadSound('corona_virus.mp3');
 }
 
 function setup() {
@@ -22,18 +26,24 @@ function setup() {
 	vec = createVector(0,0);
   int(numItems = 0);
 	int(s = 0, m = 0); //seconds and minutes
-	int(itemX = 200, itemY = 200);
+  int(itemX = random(0, windowWidth-100), itemY = random(0, windowHeight-75));
+  
+
+	//add item collection
+	supplies.push(soap);
+	supplies.push(toilet);
+	rand = int(random(0,supplies.length));
 
 	float(vx = 0,vy = 0);
 	float(dx = 0,dy = 0);
-	float(drag = 0.95);
+	float(drag = 0.99);
 	float(charge = 0.25);
 	float(x = windowWidth/2);
   float(y = windowHeight/2);
-	float(threshold = 0, d=0);
+  float(threshold = 0, d=0);
+  ra = int(random(0,255))
 
   /*old code*/
-  //background(0);
   // Start a socket connection to the server
   // Some day we would run this server somewhere else
   socket = io.connect('http://localhost:3000');
@@ -57,6 +67,7 @@ function setup() {
   socket.on('heartbeatMarks', function(data) {
     marks = data;
   });
+
 }
 
 function draw() {
@@ -76,9 +87,11 @@ function draw() {
 
   //draw marks
   for (var i = marks.length - 1; i >= 0; i--) {
-    fill(0,0,255);
+    fill(0,ra,0);
     ellipse(marks[i].x, marks[i].y, 100, 100);
+    
   }
+
 
   //draw all of the carts in the game
   for (var i = users.length - 1; i >= 0; i--) {
@@ -94,17 +107,23 @@ function draw() {
         socket.emit('new mark', mark);
         inCollision = true;
         collisionTimer = 0;
+        //add color hehe
+        ra = int(random(100,255));
+        corona.play();
       }
     }
 
   }
 
-  image(toilet, itemX,itemX, 100,75);
-
-	var d2 = dist(x,y,itemX,itemX);
+  //display current item.
+  image(supplies[rand],itemX,itemY, 100,80);
+	//location of current item to collect
+	var d2 = dist(x,y,itemX,itemY);
   if ( d2 < 40) {
-    itemX = random(100,900);
+		itemX = random(0, windowWidth-100);
+		itemY = random(0, windowHeight-75);
     numItems++;
+    rand = int(random(0,supplies.length));
   }
 
   //decide which direction cart should be facing
@@ -127,6 +146,13 @@ function draw() {
     inCollision = false;
   }
 
+  //display the time and number of items count. 
+  trackTime();
+	textSize(20);
+	fill(0);
+	textFont('Helvatica');
+	text(("Items: "+ numItems), (windowWidth-160), (30));
+  text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
 }
 
 function drawCart(x, y, dir){
@@ -144,4 +170,18 @@ function collision(x1,y1,x2,y2) {
     return false;
   }
 
+}
+
+//Keep track of the time as long as the player has lives.
+function trackTime(){
+  int(lives = 1);   //sample lives
+  
+	//If player has lives, count the minutes and seconds.
+	if (lives!= 0) {
+     s = second();
+     if(s >= 59){
+       s = 0;
+		 	 m = (minute() - minute() + 1);
+     }
+  }
 }

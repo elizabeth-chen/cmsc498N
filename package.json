@@ -17,5 +17,14 @@
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elizabeth-chen/cmsc498N.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elizabeth-chen/cmsc498N/issues"
+  },
+  "homepage": "https://github.com/elizabeth-chen/cmsc498N#readme"
 }
