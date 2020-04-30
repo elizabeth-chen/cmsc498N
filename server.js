@@ -1,6 +1,3 @@
-// Based off of Shawn Van Every's Live Web
-// http://itp.nyu.edu/~sve204/liveweb_fall2013/week3.html
-
 // Using express: http://expressjs.com/
 var express = require('express');
 // Create the app
@@ -30,9 +27,10 @@ function User(id, x, y, dir) {
   this.dir = dir;
 }
 
-function Mark(x, y) {
+function Mark(x, y, color) {
   this.x = x;
   this.y = y;
+  this.color = color;
 }
 
 // WebSocket Portion
@@ -87,7 +85,7 @@ io.sockets.on('connection',
 
     //add mark
     socket.on('new mark', function(data) {
-      var mark = new Mark(data.x, data.y);
+      var mark = new Mark(data.x, data.y, data.color);
       marks.push(mark)
     });
 
