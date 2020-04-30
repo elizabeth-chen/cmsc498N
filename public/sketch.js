@@ -1,5 +1,6 @@
 // Keep track of our socket connection
 var socket;
+var openSimplex;
 var users = [];
 var marks = [], marks_items = [];
 var supplies = [];
@@ -38,6 +39,8 @@ function setup() {
   ra = int(random(0,255))
 
   socket = io.connect('http://localhost:3000');
+
+  openSimplex = new OpenSimplexNoise2D(Date.now());
 
   //initial cart
   var data = {
@@ -95,9 +98,10 @@ function draw() {
   translate(-x, -y);
 
   //draw marks
+  noStroke();
   for (var i = marks.length - 1; i >= 0; i--) {
     fill(0,marks[i].color,0);
-    ellipse(marks[i].x, marks[i].y, 100, 100, 160);
+    drawSplash(marks[i].x, marks[i].y);
   }
 
   //display current item.
@@ -157,6 +161,22 @@ function drawCart(x, y, dir){
     image(cartR,x,y, 100, 100);
   else
     image(cartL,x,y, 100, 100);
+}
+
+function drawSplash(x, y) {
+   push();
+	translate(x, y);
+	let rnoise = random(1000);
+	beginShape();
+	for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
+		let radius = map(noise(rnoise), 0, 1, 20*0.1, 20*4);
+		let x = radius*cos(angle);
+		let y = radius*sin(angle);
+		curveVertex(x,y);
+		rnoise += 0.01
+	}
+	endShape(CLOSE);
+	pop();
 }
 
 function collision(x1,y1,x2,y2) {
