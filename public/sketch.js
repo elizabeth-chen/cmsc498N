@@ -101,7 +101,7 @@ function draw() {
   noStroke();
   for (var i = marks.length - 1; i >= 0; i--) {
     fill(0,marks[i].color,0);
-    drawSplash(marks[i].x, marks[i].y);
+    drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
   }
 
   //display current item.
@@ -130,7 +130,8 @@ function draw() {
         var mark = {
           x: x + 50,
           y: y + 50,
-          color: ra
+          color: ra,
+          rnoise: random(1000)
         };
         socket.emit('new mark', mark);
         inCollision = true;
@@ -163,10 +164,9 @@ function drawCart(x, y, dir){
     image(cartL,x,y, 100, 100);
 }
 
-function drawSplash(x, y) {
+function drawSplash(x, y, rnoise) {
    push();
 	translate(x, y);
-	let rnoise = random(1000);
 	beginShape();
 	for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
 		let radius = map(noise(rnoise), 0, 1, 20*0.1, 20*4);

@@ -27,10 +27,11 @@ function User(id, x, y, dir) {
   this.dir = dir;
 }
 
-function Mark(x, y, color) {
+function Mark(x, y, color, rnoise) {
   this.x = x;
   this.y = y;
   this.color = color;
+  this.rnoise = rnoise;
 }
 
 // WebSocket Portion
@@ -85,7 +86,7 @@ io.sockets.on('connection',
 
     //add mark
     socket.on('new mark', function(data) {
-      var mark = new Mark(data.x, data.y, data.color);
+      var mark = new Mark(data.x, data.y, data.color, data.rnoise);
       marks.push(mark)
     });
 
