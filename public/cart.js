@@ -2,6 +2,10 @@ function Cart(x, y, r) {
   this.pos = createVector(x, y);
   this.vel = createVector(0, 0);
 
+
+  // translate(width / 2, height / 2);
+  // translate(-x, -y);
+
   this.update = function() {
     var newvel = createVector(mouseX - width / 2, mouseY - height / 2);
     newvel.div(50);

@@ -14,6 +14,7 @@ function preload(){
   toilet = loadImage('toilet.png');
   soap = loadImage('soap.png');
   corona = loadSound('corona_virus.mp3');
+  back = loadImage('paper.jpg');
 }
 
 function setup() {
@@ -31,7 +32,7 @@ function setup() {
 
 	float(vx = 0,vy = 0);
 	float(dx = 0,dy = 0);
-	float(drag = 0.99);
+	float(drag = .99);
 	float(charge = 0.1);
 	float(x = windowWidth/2);
   float(y = windowHeight/2);
@@ -62,7 +63,7 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(back, [255]);
 	fill(0);
 
 	dx = mouseX-x;
@@ -79,23 +80,18 @@ function draw() {
 
   //display the time and number of items count.
   trackTime();
-	textSize(20);
-	fill(0);
-	textFont('Helvatica');
-	text(("Items: "+ numItems), (windowWidth-160), (30));
-  text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
+
 
   //decide which direction cart should be facing
   var dir;
-  if( mouseX > x)
+  if( mouseX > x+35)
     dir = "right";
   else
     dir = "left";
 
-
   //scroll canvas
-  translate(width / 2, height / 2);
-  translate(-x, -y);
+  // translate(width / 2, height / 2);
+  // translate(-x, -y);
 
   //draw marks
   noStroke();
@@ -106,15 +102,15 @@ function draw() {
 
   //display current item.
   image(supplies[rand],itemX,itemY, 100,80);
-	//location of current item to collect
-	var d2 = dist(x,y,itemX,itemY);
+  //location of current item to collect
+	var d2 = dist(x-30,y-30,itemX,itemY);
   if ( d2 < 40) {
 		itemX = random(0, windowWidth-100);
 		itemY = random(0, windowHeight-75);
     numItems++;
     rand = int(random(0,supplies.length));
   }
-
+	
   //draw all of the carts in the game
   for (var i = users.length - 1; i >= 0; i--) {
     var id = users[i].id;
@@ -137,7 +133,7 @@ function draw() {
         inCollision = true;
         collisionTimer = 0;
 
-        corona.play();
+        // corona.play();
       }
     }
 
@@ -159,14 +155,14 @@ function draw() {
 
 function drawCart(x, y, dir){
   if(dir == "right")
-    image(cartR,x,y, 100, 100);
+    image(cartR,x-35,y-45, 100, 100);
   else
-    image(cartL,x,y, 100, 100);
+    image(cartL,x-35,y-45, 100, 100);
 }
 
 function drawSplash(x, y, rnoise) {
    push();
-	translate(x, y);
+	translate(x-35, y-45);
 	beginShape();
 	for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
 		let radius = map(noise(rnoise), 0, 1, 20*0.1, 20*4);
@@ -200,4 +196,10 @@ function trackTime(){
 		 	 m = (minute() - minute() + 1);
      }
   }
+
+	textSize(20);
+	fill(0);
+	textFont('Helvatica');
+	text(("Items: "+ numItems), (windowWidth-160), (30));
+  text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
 }
