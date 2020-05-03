@@ -11,10 +11,22 @@ let corona;
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
-  toilet = loadImage('toilet.png');
-  soap = loadImage('soap.png');
   corona = loadSound('corona_virus.mp3');
   back = loadImage('paper.jpg');
+
+  // supplies - images
+  toiletpaper = loadImage('toiletpaper.png');
+  soapbar = loadImage('soapbar.png');
+  bread = loadImage('bread.png');
+  eggs = loadImage('eggs.png');
+  gloves = loadImage('gloves.png');
+  lotion = loadImage('lotion.png');
+  mask = loadImage('mask.png');
+  milk = loadImage('milk.png');
+  tissue = loadImage('tissue.png');
+  windex = loadImage('windex.png');
+  wipes = loadImage('wipes.png');
+ 
 }
 
 function setup() {
@@ -26,8 +38,17 @@ function setup() {
   int(itemX = random(0, windowWidth-100), itemY = random(0, windowHeight-75));
 
 	//add item collection
-	supplies.push(soap);
-	supplies.push(toilet);
+	supplies.push(soapbar);
+	supplies.push(toiletpaper);
+  supplies.push(bread);
+  supplies.push(eggs);
+  supplies.push(gloves);
+  supplies.push(lotion);
+  supplies.push(mask);
+  supplies.push(milk);
+  supplies.push(tissue);
+  supplies.push(windex);
+  supplies.push(wipes);
 	rand = int(random(0,supplies.length));
 
 	float(vx = 0,vy = 0);
@@ -39,7 +60,7 @@ function setup() {
   float(threshold = 0, d=0);
   ra = int(random(0,255))
 
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('http://cleft.fun:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -161,7 +182,7 @@ function drawCart(x, y, dir){
 }
 
 function drawSplash(x, y, rnoise) {
-   push();
+  push();
 	translate(x-35, y-45);
 	beginShape();
 	for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
