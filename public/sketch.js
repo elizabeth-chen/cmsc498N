@@ -119,7 +119,7 @@ function draw() {
   //draw marks
   noStroke();
   for (var i = marks.length - 1; i >= 0; i--) {
-    tint(0,marks[i].color,0,100);
+    //tint(0,marks[i].color,0,100);
     drawSplash(marks[i].x, marks[i].y, marks[i].size);
   }
 
@@ -150,7 +150,7 @@ function draw() {
           x: x + 50,
           y: y + 50,
           color: ra,
-          size: random(25, 200)
+          size: random(25, 125)
         };
         socket.emit('new mark', mark);
         inCollision = true;
