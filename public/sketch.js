@@ -26,7 +26,9 @@ function preload(){
   tissue = loadImage('tissue.png');
   windex = loadImage('windex.png');
   wipes = loadImage('wipes.png');
- 
+
+  paint = loadImage('paint.png');
+
 }
 
 function setup() {
@@ -117,8 +119,8 @@ function draw() {
   //draw marks
   noStroke();
   for (var i = marks.length - 1; i >= 0; i--) {
-    fill(0,marks[i].color,0);
-    drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
+    tint(0,marks[i].color,0,100);
+    drawSplash(marks[i].x, marks[i].y, marks[i].size);
   }
 
   //display current item.
@@ -131,7 +133,7 @@ function draw() {
     numItems++;
     rand = int(random(0,supplies.length));
   }
-	
+
   //draw all of the carts in the game
   for (var i = users.length - 1; i >= 0; i--) {
     var id = users[i].id;
@@ -148,7 +150,7 @@ function draw() {
           x: x + 50,
           y: y + 50,
           color: ra,
-          rnoise: random(1000)
+          size: random(25, 200)
         };
         socket.emit('new mark', mark);
         inCollision = true;
@@ -181,19 +183,8 @@ function drawCart(x, y, dir){
     image(cartL,x-35,y-45, 100, 100);
 }
 
-function drawSplash(x, y, rnoise) {
-  push();
-	translate(x-35, y-45);
-	beginShape();
-	for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
-		let radius = map(noise(rnoise), 0, 1, 20*0.1, 20*4);
-		let x = radius*cos(angle);
-		let y = radius*sin(angle);
-		curveVertex(x,y);
-		rnoise += 0.01
-	}
-	endShape(CLOSE);
-	pop();
+function drawSplash(x, y, size) {
+ image(paint, x - (paint.width/2), y - (paint.width/2), size, size);
 }
 
 function collision(x1,y1,x2,y2) {
