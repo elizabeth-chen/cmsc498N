@@ -119,8 +119,10 @@ function draw() {
   //draw marks
   noStroke();
   for (var i = marks.length - 1; i >= 0; i--) {
-    //tint(0,marks[i].color,0,100);
+    push();
+    tint(0,marks[i].color,0,100);
     drawSplash(marks[i].x, marks[i].y, marks[i].size);
+    pop();
   }
 
   //display current item.
@@ -184,7 +186,9 @@ function drawCart(x, y, dir){
 }
 
 function drawSplash(x, y, size) {
- image(paint, x - (paint.width/2), y - (paint.width/2), size, size);
+
+   image(paint, x - (paint.width/2), y - (paint.width/2), size, size);
+
 }
 
 function collision(x1,y1,x2,y2) {
