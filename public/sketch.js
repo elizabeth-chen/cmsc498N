@@ -18,7 +18,7 @@ var button_mouse, button_key;
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
-  corona = loadSound('corona_virus.mp3');
+  // corona = loadSound('corona_virus.mp3');
   back = loadImage('paper.jpg');
 
   // supplies - images

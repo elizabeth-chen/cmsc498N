@@ -93,6 +93,8 @@ io.sockets.on('connection',
 
 
     socket.on('disconnect', function() {
+      var removed = users.filter(function(value, index, arr){ return value.id != socket.id;})
+      users = removed;
       console.log("Client has disconnected");
     });
   }
