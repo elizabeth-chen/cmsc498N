@@ -15,6 +15,8 @@ var speed = 6;
 var screen = 0, mode = 1;
 var button_mouse, button_key;
 
+var newX = 0, newY = 0;
+
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
@@ -34,7 +36,7 @@ function preload(){
   windex = loadImage('windex.png');
   wipes = loadImage('wipes.png');
   paint = loadImage('paint.png');
- 
+
 }
 
 function setup() {
@@ -89,24 +91,12 @@ function setup() {
     marks = data;
   });
 
-  //scrolling setup code 
+  //scrolling setup code
 	myPos = createVector(0,0);
   worldOffset = createVector(0,0);
   worldBoundsMin = createVector(-width/2,-height/2);
 	worldBoundsMax = createVector(width/2,height/2);
   imageMode(CENTER);
-  
-  //button to select keyboard or mouse
-  button_mouse = createButton('Mouse');
-  button_mouse.size(75,25);
-  button_mouse.value = 0;
-  button_mouse.position(windowWidth/2-75, windowHeight/2);
-  button_mouse.mousePressed(mouse);
-
-  button_key = createButton('Keyboard');
-  button_key.size(75,25);
-  button_key.position(windowWidth/2+50 , windowHeight/2);
-  button_key.mousePressed(keyboard);
 
   // preset background
   // for(let x = - 5000;x < 5000;x+=200)
@@ -121,290 +111,166 @@ function setup() {
 }
 
 function draw() {
-  //Display screen with welcome message.
-  if (screen == 0) {
-    background(255)
-    // tint(255, 127); // Display at half opacity
-    fill(0)
-    textAlign(CENTER);
-    textSize(26);
-    text('WELCOME TO BATTLE OF HOARDERS', width / 2, height / 2-100)
-    textSize(18);
-    text('Chose your controls to start', width / 2, height / 2 -60);
-    
-  } else if (screen == 1){
-    background(255);
-    // background(back, [255]);
-		
-		push(); //------------WORLD SCROLLING SET UP--------
-			translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-      
-      //draw marks
-      noStroke();
-      for (var i = marks.length - 1; i >= 0; i--) {
-        fill(0,marks[i].color,0);
-        drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
+  background(255)
+
+  console.log('wx: ' + worldOffset.x+(width/2) + 'wy: ' +worldOffset.y+(height/2));
+
+  console.log('x: ' + x + 'y: ' +y);
+  console.log('itemX: ' + itemX + 'itemy: ' +itemY);
+
+  var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
+//  pop();
+  if ( d2 < 40) {
+    itemX = random(0, windowWidth-100);
+    itemY = random(0, windowHeight-75);
+    numItems++;
+    rand = int(random(0,supplies.length));
+  }
+
+
+	push(); //------------WORLD SCROLLING SET UP--------
+		translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+
+    //draw marks
+    noStroke();
+    for (var i = marks.length - 1; i >= 0; i--) {
+      fill(0,marks[i].color,0);
+      drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
+    }
+
+    //display current item.
+    image(supplies[rand],itemX,itemY, 100,80);
+    //location of current item to collect
+    //push();
+    //translate(-(worldOffset.x+(width/2)),-(worldOffset.y+(height/2)));
+
+
+    //decide which direction cart should be facing
+    var dir;
+    if( mouseX > x+35)
+      dir = "right";
+    else
+      dir = "left";
+
+
+    //draw all of the carts in the game
+    for (var i = users.length - 1; i >= 0; i--) {
+      var id = users[i].id;
+
+      if(id != socket.id) {
+        drawCart(users[i].x,users[i].y, users[i].dir);
       }
 
-      //display current item.
-      image(supplies[rand],itemX,itemY, 100,80);
-      //location of current item to collect
-      var d2 = dist(x-30,y-30,itemX,itemY);
-      if ( d2 < 40) {
-        itemX = random(0, windowWidth-100);
-        itemY = random(0, windowHeight-75);
-        numItems++;
-        rand = int(random(0,supplies.length));
-      }
-      //decide which direction cart should be facing
-      var dir;
-      if( mouseX > x+35)
-        dir = "right";
-      else
-        dir = "left";
+      if (id != socket.id) {
+        if (!inCollision && collision(x,y,users[i].x,users[i].y)){
+          var mark = {
+            x: x + 50,
+            y: y + 50,
+            color: ra,
+            rnoise: random(1000)
+          };
+          socket.emit('new mark', mark);
+          inCollision = true;
+          collisionTimer = 0;
 
-      //draw all of the carts in the game
-      for (var i = users.length - 1; i >= 0; i--) {
-        var id = users[i].id;
-
-        if(id != socket.id) {
-          drawCart(users[i].x,users[i].y, users[i].dir);
-        } else {
-          drawCart(x,y, dir);
+          // corona.play();
         }
-
-        if (id != socket.id) {
-          if (!inCollision && collision(x,y,users[i].x,users[i].y)){
-            var mark = {
-              x: x + 50,
-              y: y + 50,
-              color: ra,
-              rnoise: random(1000)
-            };
-            socket.emit('new mark', mark);
-            inCollision = true;
-            collisionTimer = 0;
-
-            // corona.play();
-          }
-        }
-      } //end draw all the carts
-
-      var data = {
-        x: x,
-        y: y,
-        dir: dir
-      };
-  
-      //send this user's data to server
-      socket.emit('update', data);
-      collisionTimer++;
-      if(collisionTimer > 20) {
-        inCollision = false;
       }
+    } //end draw all the carts
 
-    pop();//--------------------
+    var data = {
+      x: x,
+      y: y,
+      dir: dir
+    };
 
-      
-    /*********************  MOUSE MODE  *********************/
-		if(mode == 1){
-			dx = mouseX-x;
-			dy = mouseY-y; 
-			vec.set(dx,dy);
-			vec.normalize(); 
-			
-			//Make the mouse steady
-			if (dist(x,y,mouseX,mouseY) < 45) 
-				d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-			else
-				d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
-	
-			vx+=(vec.x*d);
-			vy+=(vec.y*d);
-			vx*=drag;
-			vy*=drag;
-			x+=vx;
-      y+=vy;
-      
-      push();//************
+    //send this user's data to server
+    socket.emit('update', data);
+    collisionTimer++;
+    if(collisionTimer > 20) {
+      inCollision = false;
+    }
 
-				fill(200,120,120);
-				translate(x, y);
-				if( mouseX > x+35) 
-						 image(cartR,0,0, 100, 100);
-					 else 
-             image(cartL,0,0, 100, 100);
+  pop();//--------------------
 
-        
-			pop();//************
+	dx = mouseX-x;
+	dy = mouseY-y;
+	vec.set(dx,dy);
+	vec.normalize();
 
-			//Mouse left bound 
-			if(mouseX < 150){
-				worldOffset.x+=speed;
-				worldBoundsMin.x-=speed;
-				worldBoundsMax.x-=speed;
-			}
+	//Make the mouse steady
+	if (dist(x,y,mouseX,mouseY) < 45)
+		d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+	else
+		d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
 
-			//Mouse right bound 
-			if(mouseX > windowWidth-150){
-				worldOffset.x-=speed;
-				worldBoundsMax.x+=speed;
-				worldBoundsMin.x+=speed;
-			}	
-		
-			//Mouse upper bound 
-			if(mouseY < 150){
-				worldBoundsMin.y-=speed;
-				worldBoundsMax.y-=speed;
-				worldOffset.y+=speed;
-			}
-		
-			//Mouse bottom bound 
-			if (mouseY > windowHeight-150){
-				worldOffset.y-=speed;
-				worldBoundsMax.y+=speed;
-				worldBoundsMin.y+=speed;
-			}
-			
-			//Other bounds
-			if(x > windowWidth -100){
-				x = windowWidth - 100
-			}
-			if(x < 100){
-				x = 100
-			}
-			if(y < 75){
-				y = 75
-			}
-			if(y > windowHeight-100){
-				y = windowHeight -100
-      }
-      
+	vx+=(vec.x*d);
+	vy+=(vec.y*d);
+	vx*=drag;
+	vy*=drag;
+	x+=vx;
+  y+=vy;
 
-      
+  push();//************
 
-		}//end mouse controls
-
-    //display the time and number of items count.
-    trackTime();
+		fill(200,120,120);
+		translate(x, y);
+    newX = x;
+    newY = y;
+		if( mouseX > x+35)
+				 image(cartR,0,0, 100, 100);
+			 else
+         image(cartL,0,0, 100, 100);
 
 
+	pop();//************
+
+	//Mouse left bound
+	if(mouseX < 150){
+		worldOffset.x+=speed;
+		worldBoundsMin.x-=speed;
+		worldBoundsMax.x-=speed;
+	}
+
+	//Mouse right bound
+	if(mouseX > windowWidth-150){
+		worldOffset.x-=speed;
+		worldBoundsMax.x+=speed;
+		worldBoundsMin.x+=speed;
+	}
+
+	//Mouse upper bound
+	if(mouseY < 150){
+		worldBoundsMin.y-=speed;
+		worldBoundsMax.y-=speed;
+		worldOffset.y+=speed;
+	}
+
+	//Mouse bottom bound
+	if (mouseY > windowHeight-150){
+		worldOffset.y-=speed;
+		worldBoundsMax.y+=speed;
+		worldBoundsMin.y+=speed;
+	}
+
+	//Other bounds
+	if(x > windowWidth -100){
+		x = windowWidth - 100
+	}
+	if(x < 100){
+		x = 100
+	}
+	if(y < 75){
+		y = 75
+	}
+	if(y > windowHeight-100){
+		y = windowHeight -100
+  }
 
 
-
-			// if(mode == 2){ // if keyboard mode.
-			// 	push();//************
-			// 		fill(200,120,120);
-			// 		translate(myPos.x, myPos.y);
-			// 		// ellipse(0,0,100,100);
-			// 		if( mouseX > x+35) 
-			// 		 image(cartR,0,0, 100, 100);
-			// 	 else 
-			// 		 image(cartL,0,0, 100, 100);
-			// 	pop();//************
-			// }
-
-		// pop();//--------------------
-    
-    /*********************   KEYBOARD MODE  *********************/
-		// if (mode == 2){
-		// 	//Keyboard left bound
-		// 	if(keyIsDown(LEFT_ARROW)){
-		// 		if(myPos.x < worldBoundsMin.x+ 150){
-		// 			worldOffset.x+=speed;
-		// 			worldBoundsMin.x-=speed;
-		// 			worldBoundsMax.x-=speed;
-		// 		}
-		// 		myPos.x-=speed; 		
-		// 	}
-
-		// 	//Keyboard right bound
-		// 	if(keyIsDown(RIGHT_ARROW)){
-		// 		if(myPos.x > worldBoundsMax.x-150){
-		// 			worldOffset.x-=speed;
-		// 			worldBoundsMax.x+=speed;
-		// 			worldBoundsMin.x+=speed;
-		// 		}
-		// 		myPos.x+=speed;
-		// 	}
-			
-		// 	//Keyboard upper bound
-		// 	if(keyIsDown(UP_ARROW)){
-		// 		if(myPos.y < worldBoundsMin.y+150){
-		// 			worldBoundsMin.y-=speed;
-		// 			worldBoundsMax.y-=speed;
-		// 			worldOffset.y+=speed;
-		// 		}
-		// 		myPos.y-=speed;
-		// 	}
-		// 	//Keyboard lower bound
-		// 	if(keyIsDown(DOWN_ARROW)){
-		// 			if(myPos.y >worldBoundsMax.y-150){
-		// 			worldOffset.y-=speed;
-		// 			worldBoundsMax.y+=speed;
-		// 			worldBoundsMin.y+=speed;
-		// 		}
-		// 		myPos.y+=speed;
-		// 	}
-    // }//end keyboard mode and controls
-    
-    
-
-
-    // //decide which direction cart should be facing
-    // var dir;
-    // if( mouseX > x+35)
-    //   dir = "right";
-    // else
-    //   dir = "left";
-
-
-    // //draw marks
-    // noStroke();
-    // for (var i = marks.length - 1; i >= 0; i--) {
-    //   fill(0,marks[i].color,0);
-    //   drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
-    // }
-
-
-
-
-
-
-  //   //display current item.
-  //   image(supplies[rand],itemX,itemY, 100,80);
-  //   //location of current item to collect
-  //   var d2 = dist(x-30,y-30,itemX,itemY);
-  //   if ( d2 < 40) {
-  //     itemX = random(0, windowWidth-100);
-  //     itemY = random(0, windowHeight-75);
-  //     numItems++;
-  //     rand = int(random(0,supplies.length));
-  //   }
-	
-    
-
-    // var data = {
-    //   x: x,
-    //   y: y,
-    //   dir: dir
-    // };
-
-    // //send this user's data to server
-    // socket.emit('update', data);
-    // collisionTimer++;
-    // if(collisionTimer > 20) {
-    //   inCollision = false;
-    // }
-
-  // }
-
-
-  }//end screen 1
+  //display the items count.
+  trackItems();
 }
-
-
-
 
 
 function drawCart(x, y, dir){
@@ -417,16 +283,7 @@ function drawCart(x, y, dir){
 function drawSplash(x, y, rnoise) {
   push();
 	translate(x-35, y-45);
-	beginShape();
-	// for(let angle = 0; angle <= TWO_PI; angle += PI / 1000) {
-	// 	let radius = map(noise(rnoise), 0, 1, 20*0.1, 20*4);
-	// 	let x = radius*cos(angle);
-	// 	let y = radius*sin(angle);
-	// 	curveVertex(x,y);
-	// 	rnoise += 0.01
-  // }
   image(paint, x, y, 100,100);
-	endShape(CLOSE);
 	pop();
 }
 
@@ -442,7 +299,7 @@ function collision(x1,y1,x2,y2) {
 }
 
 //Keep track of the time as long as the player has lives.
-function trackTime(){
+function trackItems(){
   int(lives = 1);   //sample lives
 	//If player has lives, count the minutes and seconds.
 	if (lives!= 0) {
@@ -456,7 +313,7 @@ function trackTime(){
 	fill(0);
 	textFont('Helvatica');
 	text(("Items: "+ numItems), (windowWidth-160), (30));
-  text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
+  //text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
 }
 
 
