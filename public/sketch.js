@@ -20,7 +20,7 @@ var newX = 0, newY = 0;
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
-  corona = loadSound('explosion2.mp3');
+  // corona = loadSound('explosion2.mp3');
   back = loadImage('grid.jpg');
 
   // supplies - images
