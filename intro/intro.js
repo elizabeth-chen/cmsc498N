@@ -57,15 +57,15 @@ function draw() {
        } else if (x >= 100 && x < 200) {
          image(bg2, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
        } else if (x >= 200 && x < 300) {
-         image(bg3, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+         image(bg3, windowWidth/2, windowHeight/2, bg3.width/1.5, bg3.height/1.5);
        } else if (x >= 300 && x < 400) {
-         image(bg4, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+         image(bg4, windowWidth/2, windowHeight/2, bg4.width/1.5, bg4.height/1.5);
        } else if (x >= 400 && x < 500) {
-         image(bg5, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+         image(bg5, windowWidth/2, windowHeight/2, bg5.width/1.5, bg5.height/1.5);
        } else if (x >= 500 && x < 600) {
-         image(bg6, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+         image(bg6, windowWidth/2, windowHeight/2, bg6.width/1.5, bg6.height/1.5);
        } else if (x >= 600 && x < 700) {
-         image(bg7, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+         image(bg7, windowWidth/2, windowHeight/2, bg7.width/1.5, bg7.height/1.5);
        } else {
          screen = 2;
        }
