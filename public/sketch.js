@@ -7,6 +7,7 @@ var supplies = [];
 var inCollision = false;
 var collisionTimer = 0;
 var corona;
+var numItems;
 
 var myPos;
 var worldOffset;
@@ -18,8 +19,17 @@ var button_mouse, button_key;
 var newX = 0, newY = 0;
 
 function preload(){
-  cartR = loadImage('cartRight.png');
-  cartL = loadImage('cartLeft.png');
+  cartR = loadImage('/carts/cartRight.png');
+  cartL = loadImage('/carts/cartLeft.png');
+  cartR1 = loadImage('/carts/cartRightBag1.png');
+  cartL1 = loadImage('/carts/cartLeftBag1.png');
+  cartR2 = loadImage('/carts/cartRightBag2.png');
+  cartL2 = loadImage('/carts/cartLeftBag2.png');
+  cartR3 = loadImage('/carts/cartRightBag3.png');
+  cartL3 = loadImage('/carts/cartLeftBag3.png');
+  cartR4 = loadImage('/carts/cartRightBag4.png');
+  cartL4 = loadImage('/carts/cartLeftBag4.png');
+
   // corona = loadSound('explosion2.mp3');
   back = loadImage('grid.jpg');
 
@@ -121,7 +131,7 @@ function draw() {
     itemY = random(0, windowHeight-75);
     numItems++;
     rand = int(random(0,supplies.length));
-    
+
   }
 
   //draw all of the carts in the game
@@ -225,11 +235,12 @@ function draw() {
 
 	fill(200,120,120);
 
+
 	if( mouseX > x+35) {
-    image(cartR,x,y, 100, 100);
+    drawCart(x,y,"right");
   }
   else {
-    image(cartL,x,y, 100, 100);
+    drawCart(x,y,"left");
   }
 
 	//Mouse left bound
@@ -289,10 +300,29 @@ function draw() {
 
 
 function drawCart(x, y, dir){
+  console.log(numItems);
   if(dir == "right")
-    image(cartR,x,y, 100, 100);
+    if(numItems < 5)
+      image(cartR,x,y, 85, 85);
+    else if (numItems < 10)
+      image(cartR1,x,y, 90, 90);
+    else if (numItems < 15)
+      image(cartR2,x,y, 90, 90);
+    else if (numItems < 20)
+      image(cartR3,x,y, 90, 90);
+    else
+      image(cartR4,x,y, 90, 90);
   else
-    image(cartL,x,y, 100, 100);
+    if(numItems < 5)
+      image(cartL,x,y, 85, 85);
+    else if (numItems < 10)
+      image(cartL1,x,y, 90, 90);
+    else if (numItems < 15)
+      image(cartL2,x,y, 90, 90);
+    else if (numItems < 20)
+      image(cartL3,x,y, 90, 90);
+    else
+      image(cartL4,x,y, 90, 90);
 }
 
 function drawSplash(x, y, paint) {
@@ -310,7 +340,7 @@ function collision(x1,y1,x2,y2) {
 
   var d2 = dist(x-30,y-30,x2,y2);
 
-  if ( d2 < 40) 
+  if ( d2 < 40)
     return true;
   else
     return false;
