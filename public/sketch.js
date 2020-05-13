@@ -113,13 +113,8 @@ function setup() {
 function draw() {
   background(255)
 
-  console.log('wx: ' + worldOffset.x+(width/2) + 'wy: ' +worldOffset.y+(height/2));
-
-  console.log('x: ' + x + 'y: ' +y);
-  console.log('itemX: ' + itemX + 'itemy: ' +itemY);
-
   var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
-//  pop();
+
   if ( d2 < 40) {
     itemX = random(0, windowWidth-100);
     itemY = random(0, windowHeight-75);
@@ -127,31 +122,33 @@ function draw() {
     rand = int(random(0,supplies.length));
   }
 
+  //draw all of the carts in the game
+  for (var i = users.length - 1; i >= 0; i--) {
+    var id = users[i].id;
+
+    if (id != socket.id) {
+      if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
+        var mark = {
+          x: x + 50,
+          y: y + 50,
+          color: ra,
+        };
+        console.log('collision');
+        socket.emit('new mark', mark);
+        inCollision = true;
+        collisionTimer = 0;
+
+        // corona.play();
+      }
+    }
+  }
+
 
 	push(); //------------WORLD SCROLLING SET UP--------
 		translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
 
-    //draw marks
-    noStroke();
-    for (var i = marks.length - 1; i >= 0; i--) {
-      fill(0,marks[i].color,0);
-      drawSplash(marks[i].x, marks[i].y, marks[i].rnoise);
-    }
-
     //display current item.
     image(supplies[rand],itemX,itemY, 100,80);
-    //location of current item to collect
-    //push();
-    //translate(-(worldOffset.x+(width/2)),-(worldOffset.y+(height/2)));
-
-
-    //decide which direction cart should be facing
-    var dir;
-    if( mouseX > x+35)
-      dir = "right";
-    else
-      dir = "left";
-
 
     //draw all of the carts in the game
     for (var i = users.length - 1; i >= 0; i--) {
@@ -161,6 +158,7 @@ function draw() {
         drawCart(users[i].x,users[i].y, users[i].dir);
       }
 
+      /*
       if (id != socket.id) {
         if (!inCollision && collision(x,y,users[i].x,users[i].y)){
           var mark = {
@@ -175,17 +173,25 @@ function draw() {
 
           // corona.play();
         }
-      }
+      }*/
     } //end draw all the carts
 
-    var data = {
-      x: x,
-      y: y,
-      dir: dir
-    };
+    push();
+    //draw marks
+    for (var i = marks.length - 1; i >= 0; i--) {
+      fill(0,marks[i].color,0);
+      drawSplash(marks[i].x-x, marks[i].y-y, paint);
+    }
+    pop();
 
-    //send this user's data to server
-    socket.emit('update', data);
+    //decide which direction cart should be facing
+    var dir;
+    if( mouseX > x+35)
+      dir = "right";
+    else
+      dir = "left";
+
+
     collisionTimer++;
     if(collisionTimer > 20) {
       inCollision = false;
@@ -211,19 +217,14 @@ function draw() {
 	x+=vx;
   y+=vy;
 
-  push();//************
+	fill(200,120,120);
 
-		fill(200,120,120);
-		translate(x, y);
-    newX = x;
-    newY = y;
-		if( mouseX > x+35)
-				 image(cartR,0,0, 100, 100);
-			 else
-         image(cartL,0,0, 100, 100);
-
-
-	pop();//************
+	if( mouseX > x+35) {
+    image(cartR,x,y, 100, 100);
+  }
+  else {
+    image(cartL,x,y, 100, 100);
+  }
 
 	//Mouse left bound
 	if(mouseX < 150){
@@ -267,6 +268,14 @@ function draw() {
 		y = windowHeight -100
   }
 
+  var cartData = {
+    x: x,
+    y: y,
+    dir: dir
+  };
+
+  //send this user's data to server
+  socket.emit('update', cartData);
 
   //display the items count.
   trackItems();
@@ -280,11 +289,11 @@ function drawCart(x, y, dir){
     image(cartL,x,y, 100, 100);
 }
 
-function drawSplash(x, y, rnoise) {
+function drawSplash(x, y, paint) {
   push();
-	translate(x-35, y-45);
-  image(paint, x, y, 100,100);
-	pop();
+  translate(-x,-y);
+  image(paint, x- (paint.width/2), y-(paint.height/2), 100,100);
+  pop();
 }
 
 

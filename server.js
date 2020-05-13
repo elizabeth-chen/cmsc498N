@@ -28,11 +28,10 @@ function User(id, x, y, dir) {
   this.dir = dir;
 }
 
-function Mark(x, y, color, rnoise) {
+function Mark(x, y, color) {
   this.x = x;
   this.y = y;
   this.color = color;
-  this.rnoise = rnoise;
 }
 
 // WebSocket Portion
