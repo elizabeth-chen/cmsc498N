@@ -86,7 +86,7 @@ io.sockets.on('connection',
 
     //add mark
     socket.on('new mark', function(data) {
-      var mark = new Mark(data.x, data.y, data.color, data.rnoise);
+      var mark = new Mark(data.x, data.y, data.color);
       marks.push(mark)
     });
 

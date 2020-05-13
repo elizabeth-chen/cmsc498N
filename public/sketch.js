@@ -20,8 +20,8 @@ var newX = 0, newY = 0;
 function preload(){
   cartR = loadImage('cartRight.png');
   cartL = loadImage('cartLeft.png');
-  // corona = loadSound('corona_virus.mp3');
-  back = loadImage('paper.jpg');
+  corona = loadSound('explosion2.mp3');
+  back = loadImage('grid.jpg');
 
   // supplies - images
   toiletpaper = loadImage('toiletpaper.png');
@@ -40,7 +40,7 @@ function preload(){
 }
 
 function setup() {
-
+  // background(back, [255]);
   createCanvas(windowWidth, windowHeight);
 	vec = createVector(0,0);
   int(numItems = 0);
@@ -111,7 +111,8 @@ function setup() {
 }
 
 function draw() {
-  background(255)
+  // background(back, [255]);
+  background(255);
 
   var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
 
@@ -120,6 +121,7 @@ function draw() {
     itemY = random(0, windowHeight-75);
     numItems++;
     rand = int(random(0,supplies.length));
+    
   }
 
   //draw all of the carts in the game
@@ -129,15 +131,17 @@ function draw() {
     if (id != socket.id) {
       if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
         var mark = {
-          x: x + 50,
-          y: y + 50,
+          x: x-worldOffset.x-(width/2),
+          y: y-worldOffset.y-(height/2),
           color: ra,
         };
-        console.log('collision');
+
         socket.emit('new mark', mark);
+        console.log('collision');
         inCollision = true;
         collisionTimer = 0;
-
+        numItems += 1;
+        // print("CRASHHHHH");
         // corona.play();
       }
     }
@@ -180,7 +184,9 @@ function draw() {
     //draw marks
     for (var i = marks.length - 1; i >= 0; i--) {
       fill(0,marks[i].color,0);
-      drawSplash(marks[i].x-x, marks[i].y-y, paint);
+      // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+      // drawSplash(marks[i].x, marks[i].y, paint);
+      image(paint, marks[i].x, marks[i].y, 100,100);
     }
     pop();
 
@@ -290,20 +296,29 @@ function drawCart(x, y, dir){
 }
 
 function drawSplash(x, y, paint) {
-  push();
-  translate(-x,-y);
-  image(paint, x- (paint.width/2), y-(paint.height/2), 100,100);
-  pop();
+  // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+  // push();
+  // translate(-x,-y);
+  // image(paint, x- (paint.width/2), y-(paint.height/2), 100,100);
+  image(paint, x, y, 100,100);
+  // pop();
 }
 
 
 
 function collision(x1,y1,x2,y2) {
-  if(x1 >= x2-50 && x1 <= x2+50 && y1 >= y2-50 && y1 <= y2+50) {
+
+  var d2 = dist(x-30,y-30,x2,y2);
+
+  if ( d2 < 40) 
     return true;
-  } else {
+  else
     return false;
-  }
+  // if(x1 >= x2-50 && x1 <= x2+50 && y1 >= y2-50 && y1 <= y2+50) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
 
 }
 
