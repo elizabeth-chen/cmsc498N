@@ -8,6 +8,7 @@ var inCollision = false;
 var collisionTimer = 0;
 var corona;
 var numItems;
+var markTypes = [];
 
 var myPos;
 var worldOffset;
@@ -19,6 +20,7 @@ var button_mouse, button_key;
 var newX = 0, newY = 0;
 
 function preload(){
+  //cart images
   cartR = loadImage('/carts/cartRight.png');
   cartL = loadImage('/carts/cartLeft.png');
   cartR1 = loadImage('/carts/cartRightBag1.png');
@@ -29,6 +31,13 @@ function preload(){
   cartL3 = loadImage('/carts/cartLeftBag3.png');
   cartR4 = loadImage('/carts/cartRightBag4.png');
   cartL4 = loadImage('/carts/cartLeftBag4.png');
+
+  //splash images
+  mark1 = loadImage('/marks/mark1.png');
+  mark2 = loadImage('/marks/mark2.png');
+//  mark3 = loadImage('/marks/mark3');
+//  mark4 = loadImage('/marks/mark4');
+//  mark5 = loadImage('/marks/mark5');
 
   // corona = loadSound('explosion2.mp3');
   back = loadImage('grid.jpg');
@@ -79,6 +88,10 @@ function setup() {
   supplies.push(wipes);
 	rand = int(random(0,supplies.length));
 
+  //add splashes
+  markTypes.push(mark1);
+  markTypes.push(mark2);
+
   // socket = io.connect('http://cleft.fun:30000');
   socket = io.connect('http://localhost:3000');
 
@@ -88,7 +101,8 @@ function setup() {
   var data = {
     x: mouseX,
     y: mouseY,
-    dir: "left"
+    dir: "left",
+    items: 0
   };
 
   socket.emit('start', data);
@@ -140,14 +154,15 @@ function draw() {
 
     if (id != socket.id) {
       if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
+        var t = int(random(0,markTypes.length));
+
         var mark = {
           x: x-worldOffset.x-(width/2),
           y: y-worldOffset.y-(height/2),
-          color: ra,
+          type: t,
         };
 
         socket.emit('new mark', mark);
-        console.log('collision');
         inCollision = true;
         collisionTimer = 0;
         numItems += 1;
@@ -169,7 +184,7 @@ function draw() {
       var id = users[i].id;
 
       if(id != socket.id) {
-        drawCart(users[i].x,users[i].y, users[i].dir);
+        drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
       }
 
       /*
@@ -190,15 +205,13 @@ function draw() {
       }*/
     } //end draw all the carts
 
-    push();
     //draw marks
     for (var i = marks.length - 1; i >= 0; i--) {
-      fill(0,marks[i].color,0);
+      //fill(0,marks[i].color,0);
       // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-      // drawSplash(marks[i].x, marks[i].y, paint);
-      image(paint, marks[i].x, marks[i].y, 100,100);
+    //  drawSplash(marks[i].x, marks[i].y, marks[i].type);
+      image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
     }
-    pop();
 
     //decide which direction cart should be facing
     var dir;
@@ -237,10 +250,10 @@ function draw() {
 
 
 	if( mouseX > x+35) {
-    drawCart(x,y,"right");
+    drawCart(x,y,"right", numItems);
   }
   else {
-    drawCart(x,y,"left");
+    drawCart(x,y,"left", numItems);
   }
 
 	//Mouse left bound
@@ -288,7 +301,8 @@ function draw() {
   var cartData = {
     x: x,
     y: y,
-    dir: dir
+    dir: dir,
+    items: numItems
   };
 
   //send this user's data to server
@@ -299,8 +313,7 @@ function draw() {
 }
 
 
-function drawCart(x, y, dir){
-  console.log(numItems);
+function drawCart(x, y, dir, numItems){
   if(dir == "right")
     if(numItems < 5)
       image(cartR,x,y, 85, 85);
@@ -325,16 +338,9 @@ function drawCart(x, y, dir){
       image(cartL4,x,y, 90, 90);
 }
 
-function drawSplash(x, y, paint) {
-  // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-  // push();
-  // translate(-x,-y);
-  // image(paint, x- (paint.width/2), y-(paint.height/2), 100,100);
-  image(paint, x, y, 100,100);
-  // pop();
+function drawSplash(x, y, type) {
+  image(markTypes[type], x, y, 100,100);
 }
-
-
 
 function collision(x1,y1,x2,y2) {
 
@@ -344,12 +350,6 @@ function collision(x1,y1,x2,y2) {
     return true;
   else
     return false;
-  // if(x1 >= x2-50 && x1 <= x2+50 && y1 >= y2-50 && y1 <= y2+50) {
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-
 }
 
 //Keep track of the time as long as the player has lives.
