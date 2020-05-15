@@ -20,6 +20,21 @@ var button_mouse, button_key;
 var newX = 0, newY = 0;
 
 function preload(){
+   // intro images
+   intro = loadImage('/intro/opening.png');
+   bg1 = loadImage('/intro/bg1.png');
+   bg2 = loadImage('/intro/bg2.png');
+   bg3 = loadImage('/intro/bg3.png');
+   bg4 = loadImage('/intro/bg4.png');
+   bg5 = loadImage('/intro/bg5.png');
+   bg6 = loadImage('/intro/bg6.png');
+   bg7 = loadImage('/intro/bg7.png');  
+
+   // background images
+   back1 = loadImage('wb1.png');
+   back2 = loadImage('wb2.png');
+   back3 = loadImage('wb3.png');
+
   //cart images
   cartR = loadImage('/carts/cartRight.png');
   cartL = loadImage('/carts/cartLeft.png');
@@ -140,186 +155,185 @@ function setup() {
 
 function draw() {
   // background(back, [255]);
-  background(255);
+  if (screen == 0) {
+  image(intro, windowWidth/2, windowHeight/2, intro.width/1.5, intro.height/1.5);
 
-  if(marks.length == 3) {
-    //scale(.6);
-  }
-
-  var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
-
-  if ( d2 < 40) {
-    itemX = random(0, windowWidth-100);
-    itemY = random(0, windowHeight-75);
-    numItems++;
-    rand = int(random(0,supplies.length));
-
-  }
-
-  //draw all of the carts in the game
-  for (var i = users.length - 1; i >= 0; i--) {
-    var id = users[i].id;
-
-    if (id != socket.id) {
-      if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
-        var t = int(random(0,markTypes.length));
-        var a = int(random(0,360));
-
-        var mark = {
-          x: x-worldOffset.x-(width/2),
-          y: y-worldOffset.y-(height/2),
-          type: t,
-          angle: a
-        };
-
-        socket.emit('new mark', mark);
-        inCollision = true;
-        collisionTimer = 0;
-        numItems += 1;
-        // print("CRASHHHHH");
-        // corona.play();
+   } else if (screen == 1) {
+      if (x < 100) {
+        image(bg1, windowWidth/2, windowHeight/2, bg1.width/1.5, bg1.height/1.5);
+      } else if (x >= 100 && x < 200) {
+        image(bg2, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+      } else if (x >= 200 && x < 300) {
+        image(bg3, windowWidth/2, windowHeight/2, bg3.width/1.5, bg3.height/1.5);
+      } else if (x >= 300 && x < 400) {
+        image(bg4, windowWidth/2, windowHeight/2, bg4.width/1.5, bg4.height/1.5);
+      } else if (x >= 400 && x < 500) {
+        image(bg5, windowWidth/2, windowHeight/2, bg5.width/1.5, bg5.height/1.5);
+      } else if (x >= 500 && x < 600) {
+        image(bg6, windowWidth/2, windowHeight/2, bg6.width/1.5, bg6.height/1.5);
+      } else if (x >= 600 && x < 700) {
+        image(bg7, windowWidth/2, windowHeight/2, bg7.width/1.5, bg7.height/1.5);
+      } else {
+        screen = 2;
       }
-    }
-  }
+      x ++;
+
+   } else if (screen == 2) {
+     background(255);
+
+     if(marks.length == 3) {
+       //scale(.6);
+     }
+
+     var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
+
+     if ( d2 < 40) {
+       itemX = random(0, windowWidth-100);
+       itemY = random(0, windowHeight-75);
+       numItems++;
+       rand = int(random(0,supplies.length));
+
+     }
+
+     //draw all of the carts in the game
+     for (var i = users.length - 1; i >= 0; i--) {
+       var id = users[i].id;
+
+       if (id != socket.id) {
+         if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
+           var t = int(random(0,markTypes.length));
+           var a = int(random(0,360));
+
+           var mark = {
+             x: x-worldOffset.x-(width/2),
+             y: y-worldOffset.y-(height/2),
+             type: t,
+             angle: a
+           };
+
+           socket.emit('new mark', mark);
+           inCollision = true;
+           collisionTimer = 0;
+           numItems += 1;
+           // print("CRASHHHHH");
+           // corona.play();
+         }
+       }
+     }
 
 
-	push(); //------------WORLD SCROLLING SET UP--------
-		translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+   	push(); //------------WORLD SCROLLING SET UP--------
+   		translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
 
-    //draw marks
-    for (var i = marks.length - 1; i >= 0; i--) {
-      push();
-      rotate(marks[i].angle);
-      image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
-      pop();
-    }
+       //draw marks
+       for (var i = marks.length - 1; i >= 0; i--) {
+         push();
+         rotate(marks[i].angle);
+         image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
+         pop();
+       }
 
-    //display current item.
-    image(supplies[rand],itemX,itemY, 100,80);
+       //display current item.
+       image(supplies[rand],itemX,itemY, 100,80);
 
-    //draw all of the carts in the game
-    for (var i = users.length - 1; i >= 0; i--) {
-      var id = users[i].id;
+       //draw all of the carts in the game
+       for (var i = users.length - 1; i >= 0; i--) {
+         var id = users[i].id;
 
-      if(id != socket.id) {
-        drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
-      }
+         if(id != socket.id) {
+           drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+         }
 
-      /*
-      if (id != socket.id) {
-        if (!inCollision && collision(x,y,users[i].x,users[i].y)){
-          var mark = {
-            x: x + 50,
-            y: y + 50,
-            color: ra,
-            rnoise: random(1000)
-          };
-          socket.emit('new mark', mark);
-          inCollision = true;
-          collisionTimer = 0;
+         /*
+         if (id != socket.id) {
+           if (!inCollision && collision(x,y,users[i].x,users[i].y)){
+             var mark = {
+               x: x + 50,
+               y: y + 50,
+               color: ra,
+               rnoise: random(1000)
+             };
+             socket.emit('new mark', mark);
+             inCollision = true;
+             collisionTimer = 0;
 
-          // corona.play();
-        }
-      }*/
-    } //end draw all the carts
+             // corona.play();
+           }
+         }*/
+       } //end draw all the carts
 
-    //decide which direction cart should be facing
-    var dir;
-    if( mouseX > x+35)
-      dir = "right";
-    else
-      dir = "left";
-
-
-    collisionTimer++;
-    if(collisionTimer > 20) {
-      inCollision = false;
-    }
-
-  pop();//--------------------
-
-	dx = mouseX-x;
-	dy = mouseY-y;
-	vec.set(dx,dy);
-	vec.normalize();
-
-	//Make the mouse steady
-	if (dist(x,y,mouseX,mouseY) < 45)
-		d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-	else
-		d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
-
-	vx+=(vec.x*d);
-	vy+=(vec.y*d);
-	vx*=drag;
-	vy*=drag;
-	x+=vx;
-  y+=vy;
-
-	fill(200,120,120);
+       //decide which direction cart should be facing
+       var dir;
+       if( mouseX > x+35)
+         dir = "right";
+       else
+         dir = "left";
 
 
-	if( mouseX > x+35) {
-    drawCart(x,y,"right", numItems);
-  }
-  else {
-    drawCart(x,y,"left", numItems);
-  }
+       collisionTimer++;
+       if(collisionTimer > 20) {
+         inCollision = false;
+       }
 
-	//Mouse left bound
-	if(mouseX < 150){
-		worldOffset.x+=speed;
-		worldBoundsMin.x-=speed;
-		worldBoundsMax.x-=speed;
-	}
+     pop();//--------------------
 
-	//Mouse right bound
-	if(mouseX > windowWidth-150){
-		worldOffset.x-=speed;
-		worldBoundsMax.x+=speed;
-		worldBoundsMin.x+=speed;
-	}
+   	dx = mouseX-x;
+   	dy = mouseY-y;
+   	vec.set(dx,dy);
+   	vec.normalize();
 
-	//Mouse upper bound
-	if(mouseY < 150){
-		worldBoundsMin.y-=speed;
-		worldBoundsMax.y-=speed;
-		worldOffset.y+=speed;
-	}
+   	//Make the mouse steady
+   	if (dist(x,y,mouseX,mouseY) < 45)
+   		d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+   	else
+   		d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
 
-	//Mouse bottom bound
-	if (mouseY > windowHeight-150){
-		worldOffset.y-=speed;
-		worldBoundsMax.y+=speed;
-		worldBoundsMin.y+=speed;
-	}
+   	vx+=(vec.x*d);
+   	vy+=(vec.y*d);
+   	vx*=drag;
+   	vy*=drag;
+   	x+=vx;
+     y+=vy;
 
-	//Other bounds
-	if(x > windowWidth -100){
-		x = windowWidth - 100
-	}
-	if(x < 100){
-		x = 100
-	}
-	if(y < 75){
-		y = 75
-	}
-	if(y > windowHeight-100){
-		y = windowHeight -100
-  }
+   	fill(200,120,120);
 
-  var cartData = {
-    x: x,
-    y: y,
-    dir: dir,
-    items: numItems
-  };
 
-  //send this user's data to server
-  socket.emit('update', cartData);
+   	if( mouseX > x+35) {
+       drawCart(x,y,"right", numItems);
+     }
+     else {
+       drawCart(x,y,"left", numItems);
+     }
 
-  //display the items count.
-  trackItems();
+   	//Mouse left bound
+   	if(mouseX < 150){
+   		worldOffset.x+=speed;
+   		worldBoundsMin.x-=speed;
+   		worldBoundsMax.x-=speed;
+   	}
+
+   	//Mouse right bound
+   	if(mouseX > windowWidth-150){
+   		worldOffset.x-=speed;
+   		worldBoundsMax.x+=speed;
+   		worldBoundsMin.x+=speed;
+   	}
+
+   	//Mouse upper bound
+   	if(mouseY < 150){
+   		worldBoundsMin.y-=speed;
+   		worldBoundsMax.y-=speed;
+   		worldOffset.y+=speed;
+   	}
+
+   	//Mouse bottom bound
+   	if (mouseY > windowHeight-150){
+   		worldOffset.y-=speed;
+   		worldBoundsMax.y+=speed;
+   		worldBoundsMin.y+=speed;
+   	}
+
+   }
 }
 
 
