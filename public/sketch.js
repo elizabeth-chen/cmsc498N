@@ -15,7 +15,7 @@ var worldOffset;
 var worldBoundsMin,worldBoundsMax;
 var speed = 6;
 var screen = 0, mode = 1;
-var s;
+var s = 0;
 var button_mouse, button_key;
 
 var newX = 0, newY = 0;
