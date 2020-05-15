@@ -15,6 +15,7 @@ var worldOffset;
 var worldBoundsMin,worldBoundsMax;
 var speed = 6;
 var screen = 0, mode = 1;
+var s;
 var button_mouse, button_key;
 
 var newX = 0, newY = 0;
@@ -171,24 +172,24 @@ function draw() {
   image(intro, windowWidth/2, windowHeight/2, intro.width/1.5, intro.height/1.5);
 
    } else if (screen == 1) {
-      if (x < 100) {
+      if (s < 100) {
         image(bg1, windowWidth/2, windowHeight/2, bg1.width/1.5, bg1.height/1.5);
-      } else if (x >= 100 && x < 200) {
+     } else if (s >= 100 && s < 200) {
         image(bg2, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
-      } else if (x >= 200 && x < 300) {
+     } else if (s >= 200 && s < 300) {
         image(bg3, windowWidth/2, windowHeight/2, bg3.width/1.5, bg3.height/1.5);
-      } else if (x >= 300 && x < 400) {
+     } else if (s >= 300 && s < 400) {
         image(bg4, windowWidth/2, windowHeight/2, bg4.width/1.5, bg4.height/1.5);
-      } else if (x >= 400 && x < 500) {
+     } else if (s >= 400 && s < 500) {
         image(bg5, windowWidth/2, windowHeight/2, bg5.width/1.5, bg5.height/1.5);
-      } else if (x >= 500 && x < 600) {
+     } else if (s >= 500 && s < 600) {
         image(bg6, windowWidth/2, windowHeight/2, bg6.width/1.5, bg6.height/1.5);
-      } else if (x >= 600 && x < 700) {
+     } else if (s >= 600 && s < 700) {
         image(bg7, windowWidth/2, windowHeight/2, bg7.width/1.5, bg7.height/1.5);
       } else {
         screen = 2;
       }
-      x ++;
+      s ++;
 
    } else if (screen == 2) {
      background(255);
