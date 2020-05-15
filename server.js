@@ -5,7 +5,7 @@ var app = express();
 
 // Set up the server
 // process.env.PORT is related to deploying on heroku
-var server = app.listen(process.env.PORT || 3000, listen);
+var server = app.listen(process.env.PORT || 30000, listen);
 
 
 // This call back just tells us that the server has started
@@ -21,17 +21,19 @@ app.use(express.static('public'));
 var users = [];
 var marks = [];
 
-function User(id, x, y, dir) {
+function User(id, x, y, dir, items) {
   this.id = id;
   this.x = x;
   this.y = y;
   this.dir = dir;
+  this.items = items;
 }
 
-function Mark(x, y, color) {
+function Mark(x, y, type, angle) {
   this.x = x;
   this.y = y;
-  this.color = color;
+  this.type = type;
+  this.angle = angle;
 }
 
 // WebSocket Portion
@@ -58,7 +60,7 @@ io.sockets.on('connection',
     //when user first enters the game, add the user to list of all users
     socket.on('start', function(data) {
       console.log(socket.id + ' ' + data.x + ' ' + data.y);
-      var user = new User(socket.id, data.x, data.y, data.dir);
+      var user = new User(socket.id, data.x, data.y, data.dir, data.items);
       users.push(user);
     });
 
@@ -80,13 +82,14 @@ io.sockets.on('connection',
         user.x = data.x;
         user.y = data.y;
         user.dir = data.dir;
+        user.items = data.items;
       }
 
     });
 
     //add mark
     socket.on('new mark', function(data) {
-      var mark = new Mark(data.x, data.y, data.color);
+      var mark = new Mark(data.x, data.y, data.type, data.angle);
       marks.push(mark)
     });
 
