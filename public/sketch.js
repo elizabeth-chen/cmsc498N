@@ -75,7 +75,6 @@ function preload(){
   tissue = loadImage('supplies/tissue.png');
   windex = loadImage('supplies/windex.png');
   wipes = loadImage('supplies/wipes.png');
-  paint = loadImage('supplies/paint.png');
 
   // soundFormats('mp3', 'ogg');
   grabItem_sound = loadSound("sounds/grabitem1.mp3")
@@ -119,8 +118,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:3000');
+  // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -224,8 +223,8 @@ function draw() {
       //check local collisions with cart items. 
       var d2 = dist(x,y,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
       if ( d2 < 40) {
-        itemX = random(-canvasSize, canvasSize);
-        itemY = random(-canvasSize, canvasSize);
+        itemX = random(-canvasSize+200, canvasSize-200);
+        itemY = random(-canvasSize+200, canvasSize-200);
         numItems++;
         rand = int(random(0,supplies.length));
         grabItem_sound.play();
@@ -252,9 +251,12 @@ function draw() {
            collisionTimer = 0;
            vx *= (-1);
            vy *= (-1);
-           users[i].x *= vx;
-           users[i].y *= vy;
-          //  numItems += 1;
+           users[i].x -= vx;
+           users[i].y -= vy;
+
+          //  if (numItems != 0){
+          //    numItems -= 1;
+          //  }
            // print("CRASHHHHH");
            crash_sound.play();
          }
@@ -445,7 +447,7 @@ function trackItems(){
 	fill(0);
 	textFont('Helvatica');
 	text(("Items: "+ numItems), (windowWidth/2-35), 30);
-  //text(("Time: "+ m + ":" + s ), (windowWidth-160), (60));
+  text(("Players: "+ users.length ), (windowWidth-160), 100);
 }
 
 
