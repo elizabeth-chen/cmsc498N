@@ -28,7 +28,7 @@ function preload(){
    bg4 = loadImage('/intro/bg4.png');
    bg5 = loadImage('/intro/bg5.png');
    bg6 = loadImage('/intro/bg6.png');
-   bg7 = loadImage('/intro/bg7.png');  
+   bg7 = loadImage('/intro/bg7.png');
 
    // background images
    back1 = loadImage('wb1.png');
@@ -140,6 +140,18 @@ function setup() {
 	worldBoundsMax = createVector(width/2,height/2);
   imageMode(CENTER);
   angleMode(DEGREES);
+
+  //button to select keyboard or mouse
+  button_mouse = createButton('Mouse');
+  button_mouse.size(75,25);
+  button_mouse.value = 0;
+  button_mouse.position(windowWidth/2-115, windowHeight/2 + 75);
+  button_mouse.mousePressed(mouse);
+
+  button_key = createButton('Keyboard');
+  button_key.size(75,25);
+  button_key.position(windowWidth/2+20 , windowHeight/2 + 75);
+  button_key.mousePressed(keyboard);
 
   // preset background
   // for(let x = - 5000;x < 5000;x+=200)
