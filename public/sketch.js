@@ -35,9 +35,9 @@ function preload(){
   //splash images
   mark1 = loadImage('/marks/mark1.png');
   mark2 = loadImage('/marks/mark2.png');
-//  mark3 = loadImage('/marks/mark3');
-//  mark4 = loadImage('/marks/mark4');
-//  mark5 = loadImage('/marks/mark5');
+  mark3 = loadImage('/marks/mark3.png');
+  mark4 = loadImage('/marks/mark4.png');
+  mark5 = loadImage('/marks/mark5.png');
 
   // corona = loadSound('explosion2.mp3');
   back = loadImage('grid.jpg');
@@ -91,9 +91,12 @@ function setup() {
   //add splashes
   markTypes.push(mark1);
   markTypes.push(mark2);
+  markTypes.push(mark3);
+  markTypes.push(mark4);
+  markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:3000');
+  //socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:3000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -121,6 +124,7 @@ function setup() {
   worldBoundsMin = createVector(-width/2,-height/2);
 	worldBoundsMax = createVector(width/2,height/2);
   imageMode(CENTER);
+  angleMode(DEGREES);
 
   // preset background
   // for(let x = - 5000;x < 5000;x+=200)
@@ -137,6 +141,10 @@ function setup() {
 function draw() {
   // background(back, [255]);
   background(255);
+
+  if(marks.length == 3) {
+    //scale(.6);
+  }
 
   var d2 = dist(x-30,y-30,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
 
@@ -155,11 +163,13 @@ function draw() {
     if (id != socket.id) {
       if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
         var t = int(random(0,markTypes.length));
+        var a = int(random(0,360));
 
         var mark = {
           x: x-worldOffset.x-(width/2),
           y: y-worldOffset.y-(height/2),
           type: t,
+          angle: a
         };
 
         socket.emit('new mark', mark);
@@ -175,6 +185,14 @@ function draw() {
 
 	push(); //------------WORLD SCROLLING SET UP--------
 		translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+
+    //draw marks
+    for (var i = marks.length - 1; i >= 0; i--) {
+      push();
+      rotate(marks[i].angle);
+      image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
+      pop();
+    }
 
     //display current item.
     image(supplies[rand],itemX,itemY, 100,80);
@@ -204,14 +222,6 @@ function draw() {
         }
       }*/
     } //end draw all the carts
-
-    //draw marks
-    for (var i = marks.length - 1; i >= 0; i--) {
-      //fill(0,marks[i].color,0);
-      // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-    //  drawSplash(marks[i].x, marks[i].y, marks[i].type);
-      image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
-    }
 
     //decide which direction cart should be facing
     var dir;
