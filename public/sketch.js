@@ -77,8 +77,8 @@ function preload(){
   wipes = loadImage('supplies/wipes.png');
 
   // soundFormats('mp3', 'ogg');
-  grabItem_sound = loadSound("sounds/grabitem1.mp3")
-  crash_sound = loadSound("sounds/cart-crash3.mp3")
+  // grabItem_sound = loadSound("sounds/grabitem1.mp3")
+  // crash_sound = loadSound("sounds/cart-crash3.mp3")
 }
 
 function setup() {
@@ -227,7 +227,7 @@ function draw() {
         itemY = random(-canvasSize+200, canvasSize-200);
         numItems++;
         rand = int(random(0,supplies.length));
-        grabItem_sound.play();
+        // grabItem_sound.play();
       }
 
     //draw all of the carts in the game
@@ -258,7 +258,7 @@ function draw() {
           //    numItems -= 1;
           //  }
            // print("CRASHHHHH");
-           crash_sound.play();
+          //  crash_sound.play();
          }
        }
      }
