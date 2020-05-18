@@ -19,6 +19,7 @@ var s = 0;
 var button_mouse, button_key, skip_button;
 
 var newX = 0, newY = 0;
+
 //sound
 var crash_sound;
 var grabItem_sound; 
@@ -118,8 +119,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  // socket = io.connect('http://localhost:30000');
+ // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -172,6 +173,7 @@ function setup() {
   skip_button.size(85,25);
   skip_button.mousePressed(skip_intro);
 
+  
   // preset background
   // for(let x = - 5000;x < 5000;x+=200)
 	// {
@@ -446,8 +448,8 @@ function trackItems(){
 	textSize(20);
 	fill(0);
 	textFont('Helvatica');
-	text(("Items: "+ numItems), (windowWidth/2-35), 30);
-  text(("Players: "+ users.length ), (windowWidth-160), 100);
+	text(("Items: "+ numItems), (windowWidth/4), 30);
+  text(("Players: "+ users.length ), (windowWidth/1.75), 30);
 }
 
 
