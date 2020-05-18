@@ -118,8 +118,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://localhost:3000');
-  // socket = io.connect('http://localhost:30000');
+  socket = io.connect('http://cleft.fun:30000');
+  //socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
