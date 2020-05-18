@@ -24,6 +24,15 @@ var crash_sound;
 var grabItem_sound;
 var canvasSize = 500;
 
+var item; 
+var object;
+var arrow; 
+var range;
+
+var arrowImage;
+var testArrow;
+var arrowVal;
+
 function preload(){
 
    // intro images
@@ -118,8 +127,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:30000');
+  // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -182,6 +191,23 @@ function setup() {
 	// 			ns.push(noise(temp.x*0.3,temp.y*0.3)*150+10);
 	// 		}
   // }
+	item = createVector(windowWidth/2, windowHeight/2);
+	object = createVector(mouseX,mouseY);
+	arrow = createVector(mouseX+20, mouseY-20);
+	
+	// Draw arrow
+	imageMode(CENTER)
+	let resolution = 50
+	arrowImage = createGraphics(resolution, resolution)
+	arrowImage.beginShape(LINES)
+	arrowImage.vertex(0, 0.5 * resolution)
+	arrowImage.vertex(resolution, 0.5 * resolution)
+	arrowImage.vertex(resolution, 0.5 * resolution)
+	arrowImage.vertex(0.5 * resolution, 0.8 * resolution)
+	arrowImage.vertex(resolution, 0.5 * resolution)
+	arrowImage.vertex(0.5 * resolution, 0.2 * resolution)
+	arrowImage.endShape()
+	testArrow = new Arrow()
 }
 
 function draw() {
@@ -229,6 +255,7 @@ function draw() {
         rand = int(random(0,supplies.length));
         // grabItem_sound.play();
       }
+      arrowVal = atan2((itemY+worldOffset.y+(height/2)) - y,	(itemX+worldOffset.x+(width/2)) - x);
 
     //draw all of the carts in the game
      for (var i = users.length - 1; i >= 0; i--) {
@@ -393,6 +420,8 @@ function draw() {
 
     // display the items count.
     trackItems();
+    // testArrow.update();
+    testArrow.display();
 
   }
 }
@@ -450,8 +479,8 @@ function trackItems(){
 	textSize(20);
 	fill(0);
 	textFont('Helvatica');
-	text(("Items: "+ numItems), (windowWidth/2-35), 30);
-  text(("Players: "+ users.length ), (windowWidth-160), 100);
+	text(("Items: "+ numItems), (windowWidth/4), 30);
+  text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), 30);
 }
 
 
@@ -474,3 +503,41 @@ function skip_intro(){
   button_mouse.position(windowWidth-100, 15);
 	button_key.position(windowWidth-100, 50);
 }
+
+
+
+class Arrow {
+	constructor() {
+		arrowVal = atan2(
+			height * 0.5,
+			width * 0.5
+		)
+	}
+	
+	update() {
+		arrowVal = atan2(itemY - y,	itemX - x)
+	}
+	
+	display() {
+		push()
+		translate(width * 0.5, height * 0.05)
+		rotate(arrowVal)
+		image(arrowImage, 0, 0)
+		pop()
+	}
+}
+
+
+// function arrowDirection() {
+// 	// background(255);
+//   // fill(0);
+// 	object.x = mouseX;
+// 	object.y = mouseY;
+// 	ellipse(object.x, object.y, 40, 40);
+		
+// 	//object 
+// 	square(item.x,item.y, 50, 50);	
+
+// 	testArrow.update();
+// 	testArrow.display();
+// }
