@@ -5,7 +5,7 @@ var app = express();
 
 // Set up the server
 // process.env.PORT is related to deploying on heroku
-var server = app.listen(process.env.PORT || 30000, listen);
+var server = app.listen(process.env.PORT || 3000, listen);
 
 
 // This call back just tells us that the server has started
@@ -69,7 +69,6 @@ io.sockets.on('connection',
       //console.log(socket.id + " " + data.x + " " + data.y + " " + data.r);
       var user = users[0];
 
-      //should probably change to using a dictionary later on to make this lookup faster than a loop
       for (var i = 1; i < users.length; i++) {
         //found user to update
         if (socket.id == users[i].id) {

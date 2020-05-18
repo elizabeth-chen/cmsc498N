@@ -21,7 +21,7 @@ var button_mouse, button_key, skip_button;
 var newX = 0, newY = 0;
 //sound
 var crash_sound;
-var grabItem_sound; 
+var grabItem_sound;
 var canvasSize = 500;
 
 function preload(){
@@ -118,7 +118,7 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:3000');
   // socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
@@ -165,7 +165,7 @@ function setup() {
   button_key.size(75,25);
   button_key.position(windowWidth/2+30 , windowHeight/2 +100);
   button_key.mousePressed(keyboard);
-  
+
   col = color(191, 207, 227, 50);
   skip_button = createButton('Skip Intro');
   skip_button.style('background-color', col);
@@ -220,7 +220,7 @@ function draw() {
         //scale(.6);
       }
 
-      //check local collisions with cart items. 
+      //check local collisions with cart items.
       var d2 = dist(x,y,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
       if ( d2 < 40) {
         itemX = random(-canvasSize+200, canvasSize-200);
@@ -282,6 +282,9 @@ function draw() {
       for (var i = users.length - 1; i >= 0; i--) {
         var id = users[i].id;
 
+        console.log(i);
+        console.log(users[i].items);
+
         if(id != socket.id) {
            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
         }
@@ -308,7 +311,7 @@ function draw() {
     }
 
     pop();//-----------------------------
-       
+
     dx = mouseX-x;
     dy = mouseY-y;
     vec.set(dx,dy);
@@ -381,7 +384,8 @@ function draw() {
     var cartData = {
       x: x,
       y: y,
-      dir: dir
+      dir: dir,
+      items: numItems
     };
 
     //send this user's data to server
@@ -394,15 +398,15 @@ function draw() {
 }
 
 
-function drawCart(x, y, dir, numItems){
+function drawCart(x, y, dir, items){
   if(dir == "right")
-    if(numItems < 5)
+    if(items < 5)
       image(cartR,x,y, 85, 85);
-    else if (numItems < 10)
+    else if (items < 10)
       image(cartR1,x,y, 90, 90);
-    else if (numItems < 15)
+    else if (items < 15)
       image(cartR2,x,y, 90, 90);
-    else if (numItems < 20)
+    else if (items < 20)
       image(cartR3,x,y, 90, 90);
     else
       image(cartR4,x,y, 90, 90);
@@ -426,7 +430,7 @@ function drawSplash(x, y, type) {
 function collision(x1,y1,x2,y2) {
 
   var d2 = dist(x,y,x2,y2);
-  if ( d2 < 40) 
+  if ( d2 < 40)
     return true;
   else
     return false;
