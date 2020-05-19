@@ -309,11 +309,6 @@ function draw() {
            vy *= (-1);
            users[i].x -= vx;
            users[i].y -= vy;
-
-          //  if (numItems != 0){
-          //    numItems -= 1;
-          //  }
-           // print("CRASHHHHH");
           //  crash_sound.play();
          }
        }
@@ -417,7 +412,7 @@ function draw() {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        drawCart(x,y,"right", numItems, hasMost);
+        drawCart(x,y,"left", numItems, hasMost);
         pop();
       } else {
         drawCart(x,y,"left", numItems, hasMost);
@@ -518,13 +513,13 @@ function drawCart(x, y, dir, items, isWinning){
     else
       image(cartR4,x,y, 90, 90);
   } else {
-    if(numItems < 10)
+    if(items < 10)
       image(cartL,x,y, 85, 85);
-    else if (numItems < 20)
+    else if (items < 20)
       image(cartL1,x,y, 90, 90);
-    else if (numItems < 25)
+    else if (items < 25)
       image(cartL2,x,y, 90, 90);
-    else if (numItems < 30)
+    else if (items < 30)
       image(cartL3,x,y, 90, 90);
     else
       image(cartL4,x,y, 90, 90);
@@ -560,19 +555,25 @@ function trackItems(){
 
 
 function mouse() {
-	mode = 1;
-	button_mouse.position(windowWidth-100, 15);
-	button_key.position(windowWidth-100, 50);
-	screen = 1;
+	if(screen != 2){
+    screen = 1;
+    button_mouse.position(windowWidth-100, 15);
+    button_key.position(windowWidth-100, 50);
+  }
+  mode = 1;
 }
 function keyboard() {
-	mode = 2;
-	button_mouse.position(windowWidth-100, 15);
-	button_key.position(windowWidth-100, 50);
-	screen = 1;
+  //only change if 
+  if(screen != 2){
+    screen = 1;
+    button_mouse.position(windowWidth-100, 15);
+    button_key.position(windowWidth-100, 50);
+  }
+  mode = 2;
 }
 
 function skip_intro(){
+  mode = 1;
   screen = 2;
   skip_button.position(windowWidth, -50);
   button_mouse.position(windowWidth-100, 15);
