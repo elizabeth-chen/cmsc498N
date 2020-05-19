@@ -5,7 +5,7 @@ var app = express();
 
 // Set up the server
 // process.env.PORT is related to deploying on heroku
-var server = app.listen(process.env.PORT || 30000, listen);
+var server = app.listen(process.env.PORT || 3000, listen);
 
 
 // This call back just tells us that the server has started
@@ -20,6 +20,7 @@ app.use(express.static('public'));
 
 var users = [];
 var marks = [];
+var mostItems = 0;
 
 function User(id, x, y, dir, items) {
   this.id = id;
@@ -27,6 +28,7 @@ function User(id, x, y, dir, items) {
   this.y = y;
   this.dir = dir;
   this.items = items;
+  this.isWinning = false;
 }
 
 function Mark(x, y, type, angle) {
@@ -41,12 +43,17 @@ function Mark(x, y, type, angle) {
 var io = require('socket.io')(server);
 
 setInterval(heartbeat, 33);
+setInterval(getWinnerCount, 33);
 
 
 //send out update to all the current clients of each user's location and marks
 function heartbeat() {
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
+}
+
+function getWinnerCount() {
+  io.sockets.emit('getWinnerCount', mostItems);
 }
 
 // Register a callback function to run when we have an individual connection
@@ -66,7 +73,6 @@ io.sockets.on('connection',
 
     //update user's location
     socket.on('update', function(data) {
-      //console.log(socket.id + " " + data.x + " " + data.y + " " + data.r);
       var user = users[0];
 
       for (var i = 1; i < users.length; i++) {
@@ -78,17 +84,23 @@ io.sockets.on('connection',
 
       //check to make sure user is not null (getting error when game first loads if we don't check for this, probably something to look into later on)
       if(user) {
-        user.x = data.x;
-        user.y = data.y;
-        user.dir = data.dir;
-        user.items = data.items;
-      }
-
+        if(data.items >= mostItems && data.items != 0) {
+          user.isWinning = true;
+          mostItems = data.items;
+        } else {
+          user.isWinning = false;
+        }
+          user.x = data.x;
+          user.y = data.y;
+          user.dir = data.dir;
+          user.items = data.items;
+        }
     });
 
    //delete all users from game
    socket.on('delete users', function(){
      users = [];
+     mostItems = 0;
    });
 
     //add mark
@@ -97,11 +109,25 @@ io.sockets.on('connection',
       marks.push(mark)
     });
 
-
     socket.on('disconnect', function() {
       var removed = users.filter(function(value, index, arr){ return value.id != socket.id;})
+      var toRemove = users.filter(function(value, index, arr){ return value.id == socket.id;})
       users = removed;
+      //if disconnecting user had most items, calculate new winning cart
+      if(toRemove[0] != null && toRemove[0].isWinning) {
+        calculateNewWinner();
+      }
       console.log("Client has disconnected");
     });
   }
 );
+
+function calculateNewWinner() {
+  var currentMost = 0;
+  for (var i = 0; i < users.length; i++) {
+    if(users[i].items > currentMost) {
+      currentMost = users[i].items;
+    }
+  }
+  mostItems = currentMost;
+}
