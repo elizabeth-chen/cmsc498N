@@ -350,6 +350,7 @@ function draw() {
           if(scaleCount < 1) {
             push();
             tint(255, imageOpacity);
+            console.log('cart ' + i+ " x: " + users[i].x + 'cart ' + i+ "y: " users[i].y);
             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
             pop();
           }
@@ -473,6 +474,8 @@ function draw() {
       dir: dir,
       items: numItems,
     };
+
+    console.log('this x: ' + x + 'this y: ' + y);
 
     //send this user's data to server
     socket.emit('update', cartData);
