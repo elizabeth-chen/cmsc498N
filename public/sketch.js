@@ -20,6 +20,7 @@ var worldOffset;
 var worldBoundsMin,worldBoundsMax;
 var canvasSize = 500;
 var screen = 0, mode = 1;
+var s = 0;
 
 var speed = 6;
 
@@ -83,6 +84,7 @@ function preload(){
   mark3 = loadImage('/marks/mark3.png');
   mark4 = loadImage('/marks/mark4.png');
   mark5 = loadImage('/marks/mark5.png');
+  mark6 = loadImage('/marks/mark6.png');
 
   // corona = loadSound('explosion2.mp3');
   back = loadImage('backgrounds/grid.jpg');
