@@ -86,6 +86,11 @@ io.sockets.on('connection',
 
     });
 
+   //delete all users from game
+   socket.on('delete users', function(){
+     users = [];
+   });
+
     //add mark
     socket.on('new mark', function(data) {
       var mark = new Mark(data.x, data.y, data.type, data.angle);
