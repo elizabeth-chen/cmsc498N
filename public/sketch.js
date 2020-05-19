@@ -1,37 +1,49 @@
 // Keep track of our socket connection
 var socket;
 var openSimplex;
+//server variables
 var users = [];
-var marks = [], marks_items = [];
+var marks = [];
+
+//game play variables
 var supplies = [];
 var inCollision = false;
 var collisionTimer = 0;
-var corona;
 var numItems;
 var markTypes = [];
 
+//screen/canvas positioning variables
 var myPos;
 var worldOffset;
 var worldBoundsMin,worldBoundsMax;
-var speed = 6;
+var canvasSize = 500;
 var screen = 0, mode = 1;
-var s = 0;
+
+var speed = 6;
+
+//button variables
 var button_mouse, button_key, skip_button;
 
 var newX = 0, newY = 0;
 //sound
 var crash_sound;
 var grabItem_sound;
-var canvasSize = 500;
+var corona;
 
-var item; 
+
+var item;
 var object;
-var arrow; 
+var arrow;
 var range;
 
+//direction arrow variables
 var arrowImage;
 var testArrow;
 var arrowVal;
+
+//zooming out variables
+var scaleCount = 1;
+var imageOpacity = 255;
 
 function preload(){
 
@@ -127,8 +139,9 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
+  //create socket
   socket = io.connect('http://cleft.fun:30000');
-  // socket = io.connect('http://localhost:30000');
+  //socket = io.connect('http://localhost:3000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -181,41 +194,34 @@ function setup() {
   skip_button.size(85,25);
   skip_button.mousePressed(skip_intro);
 
-  // preset background
-  // for(let x = - 5000;x < 5000;x+=200)
-	// {
-	// 		for(let y = - 5000;y < 5000;y+=200)
-	// 		{
-	// 			let temp = createVector(x,y);
-	// 			pts.push(temp);
-	// 			ns.push(noise(temp.x*0.3,temp.y*0.3)*150+10);
-	// 		}
-  // }
 	item = createVector(windowWidth/2, windowHeight/2);
 	object = createVector(mouseX,mouseY);
 	arrow = createVector(mouseX+20, mouseY-20);
-	
+
 	// Draw arrow
-	imageMode(CENTER)
-	let resolution = 50
-	arrowImage = createGraphics(resolution, resolution)
-	arrowImage.beginShape(LINES)
-	arrowImage.vertex(0, 0.5 * resolution)
-	arrowImage.vertex(resolution, 0.5 * resolution)
-	arrowImage.vertex(resolution, 0.5 * resolution)
-	arrowImage.vertex(0.5 * resolution, 0.8 * resolution)
-	arrowImage.vertex(resolution, 0.5 * resolution)
-	arrowImage.vertex(0.5 * resolution, 0.2 * resolution)
-	arrowImage.endShape()
-	testArrow = new Arrow()
+	imageMode(CENTER);
+	let resolution = 50;
+	arrowImage = createGraphics(resolution, resolution);
+	arrowImage.beginShape(LINES);
+	arrowImage.vertex(0, 0.5 * resolution);
+	arrowImage.vertex(resolution, 0.5 * resolution);
+	arrowImage.vertex(resolution, 0.5 * resolution);
+	arrowImage.vertex(0.5 * resolution, 0.8 * resolution);
+	arrowImage.vertex(resolution, 0.5 * resolution);
+	arrowImage.vertex(0.5 * resolution, 0.2 * resolution);
+	arrowImage.endShape();
+	testArrow = new Arrow();
+
+  windowResized();
 }
 
 function draw() {
   //draw background.
   // background(back, [255]);
+  //intro screen
   if (screen == 0) {
     image(intro, windowWidth/2, windowHeight/2, intro.width/1.5, intro.height/1.5);
-
+  //directions screen
   } else if (screen == 1) {
     skip_button.position(windowWidth/2+220 , windowHeight/2+200);
 
@@ -238,15 +244,28 @@ function draw() {
     }
     s ++;
 
+  //game play screen
   } else if (screen == 2) {
       background(255);
-      skip_button.position(windowWidth, -50);
 
-      if(marks.length == 3) {
-        //scale(.6);
+      //zoom out
+      if(marks.length == 20) {
+        button_mouse.hide();
+        button_key.hide();
+        if(scaleCount > .5) {
+          scale(scaleCount);
+          scaleCount=scaleCount-.007;
+          imageOpacity=imageOpacity-7;
+        } else {
+          scale(scaleCount);
+          showEndScreen();
+          screen = 3;
+        }
       }
 
-      //check local collisions with cart items.
+      skip_button.position(windowWidth, -50);
+
+      //check if cart has picked up an item
       var d2 = dist(x,y,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
       if ( d2 < 40) {
         itemX = random(-canvasSize+200, canvasSize-200);
@@ -257,7 +276,7 @@ function draw() {
       }
       arrowVal = atan2((itemY+worldOffset.y+(height/2)) - y,	(itemX+worldOffset.x+(width/2)) - x);
 
-    //draw all of the carts in the game
+    //check all carts for collisions
      for (var i = users.length - 1; i >= 0; i--) {
        var id = users[i].id;
 
@@ -266,6 +285,7 @@ function draw() {
            var t = int(random(0,markTypes.length));
            var a = int(random(0,360));
 
+           //create new paint splahs
            var mark = {
              x: x-worldOffset.x-(width/2),
              y: y-worldOffset.y-(height/2),
@@ -276,6 +296,7 @@ function draw() {
            socket.emit('new mark', mark);
            inCollision = true;
            collisionTimer = 0;
+           //collision physics
            vx *= (-1);
            vy *= (-1);
            users[i].x -= vx;
@@ -296,34 +317,39 @@ function draw() {
 
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
-        push();
           // rotate(marks[i].angle);
           image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
-        pop();
       }
 
       //display current item.
-      image(supplies[rand],itemX,itemY, 100,80);
+      if(scaleCount < 1) {
+        //if zooming out, fade image
+        push();
+        tint(255,imageOpacity);
+        image(supplies[rand],itemX,itemY, 100,80);
+        pop();
+      } else {
+        image(supplies[rand],itemX,itemY, 100,80);
+      }
+
 
       //draw all of the carts in the game
       for (var i = users.length - 1; i >= 0; i--) {
         var id = users[i].id;
 
-        console.log(i);
-        console.log(users[i].items);
-
+        //only want to draw carts from server that are not this user's cart
         if(id != socket.id) {
-           drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+          if(scaleCount < 1) {
+            push();
+            tint(255, imageOpacity);
+            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+            pop();
+          }
+          else {
+            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+          }
         }
       } //end draw all the carts
-
-      // push();
-      //   //draw marks
-      //   for (var i = marks.length - 1; i >= 0; i--) {
-      //   rotate(marks[i].angle);
-      //   image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
-      //   }
-      // pop();
 
       //decide which direction cart should be facing
       var dir;
@@ -332,6 +358,7 @@ function draw() {
       else
         dir = "left";
 
+      //ensures carts don't trigger collision too many times while touching
       collisionTimer++;
       if(collisionTimer > 20) {
         inCollision = false;
@@ -350,6 +377,7 @@ function draw() {
     else
       d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
 
+    //cart physics
     vx+=(vec.x*d);
     vy+=(vec.y*d);
     vx*=drag;
@@ -359,11 +387,28 @@ function draw() {
 
     fill(200,120,120);
 
+    //draw this user's cart
     if( mouseX > x+35) {
-      drawCart(x,y,"right", numItems);
+      if(scaleCount < 1) {
+        //if zooming out, fade image
+        push();
+        tint(255,imageOpacity);
+        drawCart(x,y,"right", numItems);
+        pop();
+      } else {
+        drawCart(x,y,"right", numItems);
+      }
     }
     else {
-      drawCart(x,y,"left", numItems);
+      if(scaleCount < 1) {
+        //if zooming out, fade image
+        push();
+        tint(255,imageOpacity);
+        drawCart(x,y,"right", numItems);
+        pop();
+      } else {
+        drawCart(x,y,"left", numItems);
+      }
     }
 
     //Mouse left bound
@@ -408,6 +453,7 @@ function draw() {
       y = windowHeight -100
     }
 
+    //current cart's data to send to the server
     var cartData = {
       x: x,
       y: y,
@@ -418,44 +464,66 @@ function draw() {
     //send this user's data to server
     socket.emit('update', cartData);
 
-    // display the items count.
-    trackItems();
-    // testArrow.update();
-    testArrow.display();
+    if(scaleCount > .9) {
+      // display the items count.
+      trackItems();
+      // testArrow.update();
+      testArrow.display();
+    }
 
+    if(scaleCount == .5) {
+      showEndScreen();
+      screen = 3;
+    }
+
+  //end of game screen
+  } else {
+    scale(scaleCount);
+    translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+
+    //draw marks
+    for (var i = marks.length - 1; i >= 0; i--) {
+      push();
+        // rotate(marks[i].angle);
+        image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
+      pop();
+    }
   }
 }
 
 
 function drawCart(x, y, dir, items){
-  if(dir == "right")
-    if(items < 5)
+  if(dir == "right") {
+    if(items < 10)
       image(cartR,x,y, 85, 85);
-    else if (items < 10)
-      image(cartR1,x,y, 90, 90);
-    else if (items < 15)
-      image(cartR2,x,y, 90, 90);
     else if (items < 20)
+      image(cartR1,x,y, 90, 90);
+    else if (items < 25)
+      image(cartR2,x,y, 90, 90);
+    else if (items < 30)
       image(cartR3,x,y, 90, 90);
     else
       image(cartR4,x,y, 90, 90);
-  else
-    if(numItems < 5)
+  } else {
+    if(numItems < 10)
       image(cartL,x,y, 85, 85);
-    else if (numItems < 10)
-      image(cartL1,x,y, 90, 90);
-    else if (numItems < 15)
-      image(cartL2,x,y, 90, 90);
     else if (numItems < 20)
+      image(cartL1,x,y, 90, 90);
+    else if (numItems < 25)
+      image(cartL2,x,y, 90, 90);
+    else if (numItems < 30)
       image(cartL3,x,y, 90, 90);
     else
       image(cartL4,x,y, 90, 90);
+  }
 }
 
+//draw paint
 function drawSplash(x, y, type) {
   image(markTypes[type], x, y, 100,100);
 }
 
+//check if two carts have collided
 function collision(x1,y1,x2,y2) {
 
   var d2 = dist(x,y,x2,y2);
@@ -465,17 +533,8 @@ function collision(x1,y1,x2,y2) {
     return false;
 }
 
-//Keep track of the time as long as the player has lives.
+//Item text
 function trackItems(){
-  int(lives = 1);   //sample lives
-	//If player has lives, count the minutes and seconds.
-	if (lives!= 0) {
-     s = second();
-     if(s >= 59){
-       s = 0;
-		 	 m = (minute() - minute() + 1);
-     }
-  }
 	textSize(20);
 	fill(0);
 	textFont('Helvatica');
@@ -513,11 +572,11 @@ class Arrow {
 			width * 0.5
 		)
 	}
-	
+
 	update() {
 		arrowVal = atan2(itemY - y,	itemX - x)
 	}
-	
+
 	display() {
 		push()
 		translate(width * 0.5, height * 0.05)
@@ -527,17 +586,16 @@ class Arrow {
 	}
 }
 
+function windowResized() {
+  const css = getComputedStyle(canvas.parentElement),
+        marginWidth = round(float(css.marginLeft) + float(css.marginRight)),
+        marginHeight = round(float(css.marginTop) + float(css.marginBottom)),
+        w = windowWidth - marginWidth - (windowWidth/20), h = windowHeight - marginHeight - (windowHeight/20);
 
-// function arrowDirection() {
-// 	// background(255);
-//   // fill(0);
-// 	object.x = mouseX;
-// 	object.y = mouseY;
-// 	ellipse(object.x, object.y, 40, 40);
-		
-// 	//object 
-// 	square(item.x,item.y, 50, 50);	
+  resizeCanvas(w, h, true);
+} 
 
-// 	testArrow.update();
-// 	testArrow.display();
-// }
+function showEndScreen() {
+  socket.emit('delete users');
+  supplies = [];
+}
