@@ -24,12 +24,10 @@ var speed = 6;
 //button variables
 var button_mouse, button_key, skip_button;
 
-var newX = 0, newY = 0;
 //sound
 var crash_sound;
 var grabItem_sound;
 var corona;
-
 
 var item;
 var object;
@@ -564,7 +562,7 @@ function skip_intro(){
 }
 
 
-
+//directional arrow
 class Arrow {
 	constructor() {
 		arrowVal = atan2(
