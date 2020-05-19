@@ -25,7 +25,7 @@ var s = 0;
 var speed = 6;
 
 //button variables
-var button_mouse, button_key, skip_button;
+var button_mouse, resetButton, skipButton;
 
 var newX = 0, newY = 0;
 
@@ -108,7 +108,7 @@ function preload(){
 }
 
 function setup() {
-  background(back1, [255]);
+  // background(back1, [255]);
   createCanvas(windowWidth, windowHeight);
 	vec = createVector(0,0);
   int(numItems = 0);
@@ -118,8 +118,8 @@ function setup() {
 	float(dx = 0,dy = 0);
 	float(drag = .99);
 	float(charge = 0.25);
-	float(x = windowWidth/2);
-  float(y = windowHeight/2);
+	float(x = 0);
+  float(y = 0);
   float(threshold = 0, d=0);
   ra = int(random(0,255))
 
@@ -144,8 +144,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:3000');
+  // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -182,21 +182,22 @@ function setup() {
   button_mouse.style('color', 'white');
   button_mouse.size(100,25);
   button_mouse.value = 0;
-  button_mouse.position(windowWidth/2-50, windowHeight/2 +100);
+  button_mouse.position(windowWidth/2-45, windowHeight/2 +120);
   button_mouse.mousePressed(mouse);
 
-  button_key = createButton('Keyboard');
-  button_key.style('background-color', col);
-  button_key.style('color', 'white');
-  button_key.size(75,25);
-  button_key.position(windowWidth/2+30 , windowHeight/2 +100);
-  button_key.mousePressed(keyboard);
+  // button_key = createButton('Reset Game');
+  // button_key.style('background-color', col);
+  // button_key.style('color', 'white');
+  // button_key.size(100,25);
+  // button_key.position(windowWidth/2+30 , windowHeight/2 +120);
+  // button_key.mousePressed(keyboard);
 
   col = color(191, 207, 227, 50);
-  skip_button = createButton('Skip Intro');
-  skip_button.style('background-color', col);
-  skip_button.size(85,25);
-  skip_button.mousePressed(skip_intro);
+  skipButton = createButton('Skip Intro');
+  skipButton.style('background-color', col);
+  skipButton.size(85,25);
+  skipButton.mousePressed(skip_intro);
+  skipButton.position(windowWidth/2+ intro.width/4 , windowHeight/2 + intro.height/2.5)
 
 	item = createVector(windowWidth/2, windowHeight/2);
 	object = createVector(mouseX,mouseY);
@@ -216,12 +217,12 @@ function setup() {
 	arrowImage.endShape();
 	testArrow = new Arrow();
 
-  windowResized();
+  // windowResized();
 }
 
 function draw() {
   //draw background.
-  // background(back, [255]);
+  // background(0);
 
   //get current winner's number of items
   socket.on('getWinnerCount', function(data) {
@@ -230,33 +231,37 @@ function draw() {
 
   //intro screen
   if (screen == 0) {
-    image(intro, windowWidth/2, windowHeight/2, intro.width/1.5, intro.height/1.5);
+    // background(0);
+    skipButton.hide();
+    image(intro, windowWidth/2-20, windowHeight/2, intro.width/1.5, intro.height/1.5);
   //directions screen
   } else if (screen == 1) {
-    skip_button.position(windowWidth/2+220 , windowHeight/2+200);
+    skipButton.show();
 
     if (s < 100) {
-      image(bg1, windowWidth/2, windowHeight/2, bg1.width/1.5, bg1.height/1.5);
+      image(bg1, windowWidth/2-20, windowHeight/2, bg1.width/1.5, bg1.height/1.5);
     } else if (s >= 100 && s < 200) {
-      image(bg2, windowWidth/2, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
+      image(bg2, windowWidth/2-20, windowHeight/2, bg2.width/1.5, bg2.height/1.5);
     } else if (s >= 200 && s < 300) {
-      image(bg3, windowWidth/2, windowHeight/2, bg3.width/1.5, bg3.height/1.5);
+      image(bg3, windowWidth/2-20, windowHeight/2, bg3.width/1.5, bg3.height/1.5);
     } else if (s >= 300 && s < 400) {
-      image(bg4, windowWidth/2, windowHeight/2, bg4.width/1.5, bg4.height/1.5);
+      image(bg4, windowWidth/2-20, windowHeight/2, bg4.width/1.5, bg4.height/1.5);
     } else if (s >= 400 && s < 500) {
-      image(bg5, windowWidth/2, windowHeight/2, bg5.width/1.5, bg5.height/1.5);
+      image(bg5, windowWidth/2-20, windowHeight/2, bg5.width/1.5, bg5.height/1.5);
     } else if (s >= 500 && s < 600) {
-      image(bg6, windowWidth/2, windowHeight/2, bg6.width/1.5, bg6.height/1.5);
+      image(bg6, windowWidth/2-20, windowHeight/2, bg6.width/1.5, bg6.height/1.5);
     } else if (s >= 600 && s < 700) {
-      image(bg7, windowWidth/2, windowHeight/2, bg7.width/1.5, bg7.height/1.5);
+      image(bg7, windowWidth/2-20, windowHeight/2, bg7.width/1.5, bg7.height/1.5);
     } else {
       screen = 2;
     }
     s ++;
 
+
   //game play screen
   } else if (screen == 2) {
       background(255);
+      skipButton.hide();
 
       //zoom out
       if(marks.length == 100) {
@@ -272,8 +277,6 @@ function draw() {
           screen = 3;
         }
       }
-
-      skip_button.position(windowWidth, -50);
 
       //check if cart has picked up an item
       var d2 = dist(x,y,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
@@ -291,7 +294,7 @@ function draw() {
        var id = users[i].id;
 
        if (id != socket.id) {
-         if (!inCollision && collision(x,y,users[i].x+worldOffset.x+(width/2),users[i].y+worldOffset.y+(height/2))){
+         if (!inCollision && collision(x,y,users[i].x,users[i].y)){
            var t = int(random(0,markTypes.length));
            var a = int(random(0,360));
 
@@ -368,8 +371,7 @@ function draw() {
       if(collisionTimer > 20) {
         inCollision = false;
     }
-
-    pop();//-----------------------------
+    // pop();//-----------------------------
 
     dx = mouseX-x;
     dy = mouseY-y;
@@ -398,9 +400,10 @@ function draw() {
     } else {
       hasMost = false;
     }
+    
     if( mouseX > x+35) {
       if(scaleCount < 1) {
-        //if zooming out, fade image
+        // if zooming out, fade image
         push();
         tint(255,imageOpacity);
         drawCart(x,y,"right", numItems, hasMost);
@@ -420,6 +423,8 @@ function draw() {
         drawCart(x,y,"left", numItems, hasMost);
       }
     }
+    
+    pop();
 
     //Mouse left bound
     if(mouseX < 150 && worldOffset.x < canvasSize){
@@ -482,7 +487,7 @@ function draw() {
     }
 
     if(scaleCount == .5) {
-      showEndScreen();
+      // showEndScreen();
       screen = 3;
     }
 
@@ -557,12 +562,9 @@ function trackItems(){
 
 
 function mouse() {
-	if(screen != 2){
-    screen = 1;
-    button_mouse.position(windowWidth-100, 15);
-    button_key.position(windowWidth-100, 50);
-  }
-  mode = 1;
+  screen = 1;
+  // button_mouse.position(windowWidth-100, 15);
+  button_mouse.hide();
 }
 function keyboard() {
   //only change if
@@ -575,11 +577,9 @@ function keyboard() {
 }
 
 function skip_intro(){
-  mode = 1;
   screen = 2;
-  skip_button.position(windowWidth, -50);
-  button_mouse.position(windowWidth-100, 15);
-	button_key.position(windowWidth-100, 50);
+  button_mouse.hide();
+  skipButton.hide();
 }
 
 
