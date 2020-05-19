@@ -11,6 +11,8 @@ var inCollision = false;
 var collisionTimer = 0;
 var numItems;
 var markTypes = [];
+var mostItems = 0;
+var hasMost = false;
 
 //screen/canvas positioning variables
 var myPos;
@@ -73,6 +75,7 @@ function preload(){
   cartL3 = loadImage('/carts/cartLeftBag3.png');
   cartR4 = loadImage('/carts/cartRightBag4.png');
   cartL4 = loadImage('/carts/cartLeftBag4.png');
+  crown = loadImage('/carts/crown.png');
 
   //splash images
   mark1 = loadImage('/marks/mark1.png');
@@ -140,7 +143,7 @@ function setup() {
   markTypes.push(mark5);
 
  // socket = io.connect('http://cleft.fun:30000');
-  socket = io.connect('http://localhost:30000');
+  socket = io.connect('http://localhost:3000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -217,6 +220,12 @@ function setup() {
 function draw() {
   //draw background.
   // background(back, [255]);
+
+  //get current winner's number of items
+  socket.on('getWinnerCount', function(data) {
+    mostItems = data;
+  });
+
   //intro screen
   if (screen == 0) {
     image(intro, windowWidth/2, windowHeight/2, intro.width/1.5, intro.height/1.5);
@@ -341,11 +350,11 @@ function draw() {
           if(scaleCount < 1) {
             push();
             tint(255, imageOpacity);
-            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
             pop();
           }
           else {
-            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items);
+            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
           }
         }
       } //end draw all the carts
@@ -387,15 +396,20 @@ function draw() {
     fill(200,120,120);
 
     //draw this user's cart
+    if(numItems != 0 && numItems >= mostItems) {
+      hasMost = true;
+    } else {
+      hasMost = false;
+    }
     if( mouseX > x+35) {
       if(scaleCount < 1) {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        drawCart(x,y,"right", numItems);
+        drawCart(x,y,"right", numItems, hasMost);
         pop();
       } else {
-        drawCart(x,y,"right", numItems);
+        drawCart(x,y,"right", numItems, hasMost);
       }
     }
     else {
@@ -403,10 +417,10 @@ function draw() {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        drawCart(x,y,"right", numItems);
+        drawCart(x,y,"right", numItems, hasMost);
         pop();
       } else {
-        drawCart(x,y,"left", numItems);
+        drawCart(x,y,"left", numItems, hasMost);
       }
     }
 
@@ -457,7 +471,7 @@ function draw() {
       x: x,
       y: y,
       dir: dir,
-      items: numItems
+      items: numItems,
     };
 
     //send this user's data to server
@@ -491,7 +505,7 @@ function draw() {
 }
 
 
-function drawCart(x, y, dir, items){
+function drawCart(x, y, dir, items, isWinning){
   if(dir == "right") {
     if(items < 10)
       image(cartR,x,y, 85, 85);
@@ -514,6 +528,9 @@ function drawCart(x, y, dir, items){
       image(cartL3,x,y, 90, 90);
     else
       image(cartL4,x,y, 90, 90);
+  }
+  if(isWinning) {
+    image(crown,x-5,y-40,70,70);
   }
 }
 
