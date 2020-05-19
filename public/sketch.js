@@ -48,6 +48,7 @@ var arrowVal;
 var scaleCount = 1;
 var imageOpacity = 255;
 
+
 function preload(){
 
    // intro images
@@ -151,8 +152,8 @@ function setup() {
 
   //initial cart
   var data = {
-    x: mouseX,
-    y: mouseY,
+    x: windowWidth/2,
+    y: windowHeight/2,
     dir: "left",
     items: 0
   };
@@ -259,7 +260,7 @@ function draw() {
       background(255);
 
       //zoom out
-      if(marks.length == 100) {
+      if(marks.length == 30) {
         button_mouse.hide();
         button_key.hide();
         if(scaleCount > .5) {
@@ -268,8 +269,6 @@ function draw() {
           imageOpacity=imageOpacity-7;
         } else {
           scale(scaleCount);
-          showEndScreen();
-          screen = 3;
         }
       }
 
@@ -318,7 +317,11 @@ function draw() {
 
 
     push(); //------------WORLD SCROLLING SET UP--------
+    if(scaleCount == 1) {
       translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+    } else {
+      translate((width/2),(height/2));
+    }
 
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
@@ -482,14 +485,16 @@ function draw() {
     }
 
     if(scaleCount == .5) {
-      showEndScreen();
       screen = 3;
     }
 
   //end of game screen
   } else {
+    socket.emit('delete users');
+    supplies = [];
+    translate(windowWidth/2, windowHeight/2);
     scale(scaleCount);
-    translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+    console.log(worldOffset);
 
     //draw marks
     for (var i = marks.length - 1; i >= 0; i--) {
@@ -613,8 +618,3 @@ function windowResized() {
 
   resizeCanvas(w, h, true);
 } 
-
-function showEndScreen() {
-  socket.emit('delete users');
-  supplies = [];
-}
