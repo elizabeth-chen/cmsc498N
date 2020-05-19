@@ -177,10 +177,10 @@ function setup() {
 
   //button to select keyboard or mouse
   let col = color(21, 27, 36, 220);
-  button_mouse = createButton('Mouse');
+  button_mouse = createButton('Start Game');
   button_mouse.style('background-color', col);
   button_mouse.style('color', 'white');
-  button_mouse.size(75,25);
+  button_mouse.size(100,25);
   button_mouse.value = 0;
   button_mouse.position(windowWidth/2-50, windowHeight/2 +100);
   button_mouse.mousePressed(mouse);
