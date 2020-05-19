@@ -118,8 +118,8 @@ function setup() {
 	float(dx = 0,dy = 0);
 	float(drag = .99);
 	float(charge = 0.25);
-	float(x = 0);
-  float(y = 0);
+	float(x = width/2);
+  float(y = height/2);
   float(threshold = 0, d=0);
   ra = int(random(0,255))
 
@@ -287,6 +287,7 @@ function draw() {
         rand = int(random(0,supplies.length));
         // grabItem_sound.play();
       }
+      
       arrowVal = atan2((itemY+worldOffset.y+(height/2)) - y,	(itemX+worldOffset.x+(width/2)) - x);
 
     //check all carts for collisions
@@ -319,6 +320,24 @@ function draw() {
        }
      }
 
+    dx = mouseX-x;
+    dy = mouseY-y;
+    vec.set(dx,dy);
+    vec.normalize();
+
+    //Make the mouse steady
+    if (dist(x,y,mouseX,mouseY) < 45)
+      d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+    else
+      d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+
+    //cart physics
+    vx+=(vec.x*d);
+    vy+=(vec.y*d);
+    vx*=drag;
+    vy*=drag;
+    x+=vx;
+    y+=vy;
 
     push(); //------------WORLD SCROLLING SET UP--------
       translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
@@ -371,26 +390,27 @@ function draw() {
       if(collisionTimer > 20) {
         inCollision = false;
     }
+
     // pop();//-----------------------------
 
-    dx = mouseX-x;
-    dy = mouseY-y;
-    vec.set(dx,dy);
-    vec.normalize();
+    // dx = mouseX-x;
+    // dy = mouseY-y;
+    // vec.set(dx,dy);
+    // vec.normalize();
 
-    //Make the mouse steady
-    if (dist(x,y,mouseX,mouseY) < 45)
-      d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-    else
-      d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+    // //Make the mouse steady
+    // if (dist(x,y,mouseX,mouseY) < 45)
+    //   d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+    // else
+    //   d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
 
-    //cart physics
-    vx+=(vec.x*d);
-    vy+=(vec.y*d);
-    vx*=drag;
-    vy*=drag;
-    x+=vx;
-    y+=vy;
+    // //cart physics
+    // vx+=(vec.x*d);
+    // vy+=(vec.y*d);
+    // vx*=drag;
+    // vy*=drag;
+    // x+=vx;
+    // y+=vy;
 
     fill(200,120,120);
 
@@ -423,8 +443,25 @@ function draw() {
         drawCart(x,y,"left", numItems, hasMost);
       }
     }
+
+    // //draw all of the carts in the game
+    //     for (var i = users.length - 1; i >= 0; i--) {
+    //         var id = users[i].id;
+      
+    //         //only want to draw carts from server that are not this user's cart
+    //         if(id != socket.id) {
+    //           if(scaleCount < 1) {
+    //             push();
+    //             tint(255, imageOpacity);
+    //             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
+    //             pop();
+    //           }
+    //           else {
+    //             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
+    //           }
+    //         }
+    //       } //end draw all the carts
     
-    pop();
 
     //Mouse left bound
     if(mouseX < 150 && worldOffset.x < canvasSize){
@@ -475,6 +512,8 @@ function draw() {
       dir: dir,
       items: numItems,
     };
+
+    pop();
 
     //send this user's data to server
     socket.emit('update', cartData);
