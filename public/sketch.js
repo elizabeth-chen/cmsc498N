@@ -145,8 +145,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  //socket = io.connect('http://cleft.fun:30000');
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('http://cleft.fun:30000');
+  //socket = io.connect('http://localhost:3000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -260,7 +260,7 @@ function draw() {
       background(255);
 
       //zoom out
-      if(marks.length == 2) {
+      if(marks.length == 30) {
         button_mouse.hide();
         button_key.hide();
         if(scaleCount > .5) {
