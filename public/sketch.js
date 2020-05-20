@@ -286,8 +286,8 @@ function draw() {
 
     push(); //------------WORLD SCROLLING SET UP--------
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-    // translate(worldOffset.x/4,worldOffset.y/4);
 
+    translate(worldOffset.x/4,worldOffset.y/4);
     drawFrame();
       
       
@@ -295,8 +295,8 @@ function draw() {
       //check if cart has picked up an item
       var d2 = dist(x,y,itemX,itemY);
       if ( d2 < 40) {
-        itemX = random(0, width-150);
-        itemY = random(0, height-150);
+        itemX = random(10, width-150);
+        itemY = random(10, height-150);
         numItems++;
         rand = int(random(0,supplies.length));
         // grabItem_sound.play();
@@ -539,19 +539,19 @@ function draw() {
     // console.log("x: ", x, " y: ", y);
     console.log("canvas: ", canvasSize-worldOffset.x, " world: ", worldOffset.x);
     //left
-    if(x < 100 ){ //&& worldOffset.x < canvasSize){
-      x = 100
+    if(x < 10 ){ //&& worldOffset.x < canvasSize){
+      x = 10
     }
     //right
-    if(x > windowWidth -100 ){ //&& worldOffset.x > -canvasSize){
+    if(x > windowWidth - 100 ){ //&& worldOffset.x > -canvasSize){
       x = windowWidth - 100
     }
     //up
-    if(y < 75 ){ //&& worldOffset.y < canvasSize){
-      y = 75
+    if(y < 20 ){ //&& worldOffset.y < canvasSize){
+      y = 20
     }
     //down
-    if(y > windowHeight-100){ //} && worldOffset.y > -canvasSize){
+    if(y > windowHeight- 100){ //} && worldOffset.y > -canvasSize){
       y = windowHeight -100
     }
 
@@ -687,7 +687,7 @@ class Arrow {
 	}
 
 	update() {
-    fill(19, 166, 8);
+    fill(0);
 		arrowVal = atan2(itemY - y,	itemX - x)
 	}
 
