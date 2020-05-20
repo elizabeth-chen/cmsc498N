@@ -111,8 +111,7 @@ io.sockets.on('connection',
    socket.on('delete users', function(){
      users = [];
      mostItems = 0;
-     host = server.address().address;
-     port = server.address().port;
+     app.listen(process.env.PORT || 30000, listen);
    });
 
    socket.on('delete marks', function(){
