@@ -475,7 +475,7 @@ function draw() {
       //button_mouse.hide();
       //button_key.hide();
       screen = 3;
-    } 
+    }
 
   //end of game screen
   } else {

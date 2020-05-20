@@ -22,11 +22,7 @@ var users = [];
 var marks = [];
 var mostItems = 0;
 
-var item = {
-  x: parseInt(Math.random(500, 500)),
-  y: parseInt(Math.random(500, 500)),
-  type: parseInt(Math.random(0, 6))
-}
+var item;
 
 function User(id, x, y, dir, items, offset) {
   this.id = id;
@@ -52,9 +48,17 @@ var io = require('socket.io')(server);
 setInterval(heartbeat, 33);
 setInterval(getWinnerCount, 33);
 
-
 //send out update to all the current clients of each user's location and marks
 function heartbeat() {
+  x = Math.floor(Math.random() * 600)+400;
+  y = Math.floor(Math.random() * 600)+400;
+  type =  Math.floor(Math.random() * 6);
+  item = {
+    x: x,
+    y: y,
+    type: type
+  };
+
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
   io.sockets.emit('heartbeatItem', item);
