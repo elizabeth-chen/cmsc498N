@@ -471,8 +471,8 @@ function draw() {
 
     //current cart's data to send to the server
     var cartData = {
-      x: x+worldOffset.x+(width/2),
-      y: y+worldOffset.y+(height/2),
+      x: x,
+      y: y,
       dir: dir,
       items: numItems,
     };
