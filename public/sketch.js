@@ -364,7 +364,7 @@ function draw() {
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
           // rotate(marks[i].angle);
-          image(markTypes[marks[i].type], marks[i].x, marks[i].y, 110,110);
+          image(markTypes[marks[i].type], marks[i].x, marks[i].y, 160,160);
       }
 
       //draw current cart
@@ -375,10 +375,10 @@ function draw() {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        image(supplies[item.type],item.x,item.y, 80,60);
+        image(supplies[item.type],item.x,item.y, 75,55);
         pop();
       } else {
-        image(supplies[item.type],item.x,item.y, 80,60);
+        image(supplies[item.type],item.x,item.y, 75,55);
       }
 
 
@@ -483,7 +483,7 @@ function draw() {
     for (var i = marks.length - 1; i >= 0; i--) {
       push();
         // rotate(marks[i].angle);
-        image(markTypes[marks[i].type], marks[i].x, marks[i].y, 110,110);
+        image(markTypes[marks[i].type], marks[i].x, marks[i].y, 160,160);
       pop();
     }
   }
