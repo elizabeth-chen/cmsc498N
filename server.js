@@ -56,9 +56,6 @@ var item = {
 };
 
 function heartbeat() {
-  
-  
-
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
   io.sockets.emit('heartbeatItem', item);
@@ -114,6 +111,8 @@ io.sockets.on('connection',
    socket.on('delete users', function(){
      users = [];
      mostItems = 0;
+     host = server.address().address;
+     port = server.address().port;
    });
 
    socket.on('delete marks', function(){
