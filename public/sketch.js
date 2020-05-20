@@ -146,7 +146,7 @@ function setup() {
   markTypes.push(mark6);
 
   socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:30000');
+  // socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -188,11 +188,11 @@ function setup() {
   button_mouse.position(windowWidth/2-45, windowHeight/2 +120);
   button_mouse.mousePressed(mouse);
 
-  button_key = createButton('Reset Game');
+  button_key = createButton('Play Again');
   button_key.style('background-color', col);
   button_key.style('color', 'white');
-  button_key.size(100,25);
-  button_key.position(windowWidth/2+30 , windowHeight/2 +120);
+  button_key.size(100,30);
+  button_key.position(windowWidth/2 - 100, windowHeight/2 + 300);
   button_key.mousePressed(resetPage);
   button_key.hide();
 
@@ -252,25 +252,6 @@ function draw() {
       background(255);
       skipButton.hide();
 
-
-      //zoom out
-      // if(marks.length == 100) {
-      //   button_mouse.hide();
-      //   button_key.hide();
-      //   if(scaleCount > .5) {
-      //     scale(scaleCount);
-      //     scaleCount=scaleCount-.007;
-      //     imageOpacity=imageOpacity-7;
-      //   } else {
-      //     scale(scaleCount);
-      //     showEndScreen();
-      //     screen = 3;
-      //   }
-      // }
-
-      // drawFrame();
-
-
     push(); //------------WORLD SCROLLING SET UP--------
     translate(worldOffset.x/5,worldOffset.y/5);
       drawFrame();
@@ -282,8 +263,8 @@ function draw() {
       if ( !foundItem && d2 < 40) {
         numItems++;
         var newItem = {
-          x: random(50, width-200),
-          y: random(50, height-200),
+          x: random(50, windowWidth-canvasSize),
+          y: random(50, windowHeight-canvasSize),
           type: int(random(0,supplies.length)),
         };
 
@@ -474,7 +455,7 @@ function draw() {
     socket.emit('update', cartData);
 
     //zoom out
-    if(marks.length == 10) {
+    if(marks.length == 400) {
       //button_mouse.hide();
       //button_key.hide();
       screen = 3;
@@ -492,10 +473,10 @@ function draw() {
 
   button_key.show();
 
-  textSize(30);
+  textSize(50);
   fill(0);
 	textFont('Helvatica');
-	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), -30);
+	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), windowHeight+100);
 
 
 } else {
@@ -510,7 +491,7 @@ function draw() {
       pop();
     }
 
-    if(scaleCount > .8) {
+    if(scaleCount > .7) {
       scale(scaleCount);
       scaleCount=scaleCount-.007;
       imageOpacity=imageOpacity-7;
@@ -583,7 +564,7 @@ function trackItems(){
 	textSize(30);
   // fill(19, 166, 8);
   fill(255);
-	textFont('Helvatica');
+	textFont('monospace');
 	text(("Items: "+ numItems), (windowWidth/4), -30);
   text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), -30);
 }
@@ -618,15 +599,6 @@ function drawFrame(){
   square(-canvasSize, height, canvasSize*2+width, canvasSize);      //down
   square(width, -canvasSize, canvasSize, canvasSize*2+width);  //right
 }
-
-function windowResized() {
-  const css = getComputedStyle(canvas.parentElement),
-        marginWidth = round(float(css.marginLeft) + float(css.marginRight)),
-        marginHeight = round(float(css.marginTop) + float(css.marginBottom)),
-        w = windowWidth - marginWidth - (windowWidth/20), h = windowHeight - marginHeight - (windowHeight/20);
-
-  resizeCanvas(w, h, true);
-} 
 
 function resetPage(){
   // redraw();
