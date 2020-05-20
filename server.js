@@ -112,6 +112,10 @@ io.sockets.on('connection',
      mostItems = 0;
    });
 
+   socket.on('delete marks', function(){
+     marks = [];
+   });
+
     //add mark
     socket.on('new mark', function(data) {
       var mark = new Mark(data.x, data.y, data.type, data.angle);
