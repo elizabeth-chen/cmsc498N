@@ -146,7 +146,7 @@ function setup() {
   markTypes.push(mark6);
 
   socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:30000');
+  // socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -191,8 +191,8 @@ function setup() {
   button_key = createButton('Play Again');
   button_key.style('background-color', col);
   button_key.style('color', 'white');
-  button_key.size(100,25);
-  button_key.position(windowWidth/2 - 100, windowHeight/2 +200);
+  button_key.size(100,30);
+  button_key.position(windowWidth/2 - 100, windowHeight/2 + 300);
   button_key.mousePressed(resetPage);
   button_key.hide();
 
@@ -495,7 +495,7 @@ function draw() {
   textSize(50);
   fill(0);
 	textFont('Helvatica');
-	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), 100);
+	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), windowHeight+100);
 
 
 } else {
