@@ -278,15 +278,14 @@ function draw() {
       //   }
       // }
 
-
-    
+      trackItems();
+      testArrow.display();
     
 
     push(); //------------WORLD SCROLLING SET UP--------
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-    translate(worldOffset.x/2,worldOffset.y/2);
-      trackItems();
-      testArrow.display();
+    translate(worldOffset.x/4,worldOffset.y/4);
+      
       
 
       //check if cart has picked up an item
@@ -335,16 +334,20 @@ function draw() {
     // push(); //------------WORLD SCROLLING SET UP--------
       // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
       // make the cart follow the mouse
-      dx = mouseX-x;
-      dy = mouseY-y;
-      vec.set(dx,dy);
-      vec.normalize();
 
-      //Make the mouse steady
-      if (dist(x,y,mouseX,mouseY) < 45)
-        d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-      else
-        d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+      // if(mouseX > 0 && mouseY > 0 && mouseX < width && mouseY <height){
+        dx = mouseX-x;
+        dy = mouseY-y;
+        vec.set(dx,dy);
+        vec.normalize();
+      
+      
+        //Make the mouse steady
+        if (dist(x,y,mouseX,mouseY) < 45)
+          d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+        else
+          d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+      
 
       //cart physics
       vx+=(vec.x*d);
@@ -356,12 +359,15 @@ function draw() {
       //end follow the mouse
 
       //current cart's data to send to the server
-      var cartData = {
-        x: x,
-        y: y,
-        dir: dir,
-        items: numItems,
-      };
+      if(mouseX > 0 && mouseY > 0 && mouseX < width && mouseY <height){
+        var cartData = {
+          x: x,
+          y: y,
+          dir: dir,
+          items: numItems,
+        };
+      }
+    // }
 
       //decide which direction cart should be facing
       var dir;
@@ -369,7 +375,6 @@ function draw() {
         dir = "right";
       else
         dir = "left";
-      drawCart(x,y, dir, numItems, hasMost);
     
       // if( mouseX > x+35) {
         // if(scaleCount < 1) {
@@ -399,6 +404,9 @@ function draw() {
           // rotate(marks[i].angle);
           image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
       }
+
+      //draw current cart
+      drawCart(x,y, dir, numItems, hasMost);
 
       //display current item.
       if(scaleCount < 1) {
@@ -490,6 +498,16 @@ function draw() {
     // pop();
 
     // push();
+
+  
+
+      fill(0);
+      square(-canvasSize, -canvasSize, canvasSize, canvasSize*2+width);   //left
+      square(-canvasSize, -canvasSize, canvasSize*2+width, canvasSize);   //up
+
+      square(-canvasSize, height, canvasSize*2+width, canvasSize);      //down
+      square(width, -canvasSize, canvasSize, canvasSize*2+width);  //right
+    
                             /// BOUNDS 
     translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
     //Mouse left bound
@@ -522,7 +540,8 @@ function draw() {
     // pop();
 
     //Other bounds
-    
+    // console.log("x: ", x, " y: ", y);
+    console.log("canvas: ", canvasSize-worldOffset.x, " world: ", worldOffset.x);
     //left
     if(x < 100 ){ //&& worldOffset.x < canvasSize){
       x = 100
@@ -581,7 +600,8 @@ function draw() {
   }
 
 
-  pop();//-----------------------------
+  // pop();//-----------------------------
+  
 }
 
 
@@ -681,6 +701,15 @@ class Arrow {
 		image(arrowImage, 0, 0)
 		pop()
 	}
+}
+
+
+function drawFrame(){
+  fill(0);
+  rectangle(0-canvasSize, 0-canvasSize, canvasSize*2+width, canvasSize);
+  // rectangle(0, windowHeight, canvasSize, canvasSize);
+  // rectangle(0-canvasSize, 0-canvasSize, windowWidth, windowHeight);
+  // rectangle(0-canvasSize, 0-canvasSize, windowWidth, windowHeight);
 }
 
 function windowResized() {
