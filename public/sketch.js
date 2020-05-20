@@ -489,7 +489,15 @@ function draw() {
   for (var i = endMarks.length - 1; i >= 0; i--) {
       image(markTypes[endMarks[i].type], endMarks[i].x, endMarks[i].y, 160,160);
   }
+
   button_key.show();
+
+  textSize(30);
+  fill(0);
+	textFont('Helvatica');
+	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), -30);
+
+
 } else {
     background(255);
 
@@ -510,7 +518,6 @@ function draw() {
       endMarks = marks;
       screen = 4;
       button_key.show();
-      ending();
     }
 
   }
@@ -581,12 +588,6 @@ function trackItems(){
   text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), -30);
 }
 
-function ending() {
-  textSize(30);
-  fill(0);
-  textFont('monospace');
-  text("Hi", windowWidth/2, 600);
-}
 
 function mouse() {
   screen = 1;
