@@ -144,8 +144,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  // socket = io.connect('http://cleft.fun:30000');
-  socket = io.connect('http://localhost:30000');
+  socket = io.connect('http://cleft.fun:30000');
+  // socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -192,7 +192,7 @@ function setup() {
   button_key.style('color', 'white');
   button_key.size(100,25);
   button_key.position(windowWidth/2+30 , windowHeight/2 +120);
-  button_key.mousePressed(showEndScreen);
+  button_key.mousePressed(resetPage);
   button_key.hide();
 
   col = color(191, 207, 227, 50);
@@ -607,6 +607,12 @@ function windowResized() {
 
   resizeCanvas(w, h, true);
 } 
+
+function resetPage(){
+  // redraw();
+  socket.emit('delete marks');
+  location.reload();
+}
 
 function showEndScreen() {
   socket.emit('delete users');
