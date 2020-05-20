@@ -143,6 +143,7 @@ function setup() {
   markTypes.push(mark3);
   markTypes.push(mark4);
   markTypes.push(mark5);
+  markTypes.push(mark6);
 
   socket = io.connect('http://cleft.fun:30000');
   // socket = io.connect('http://localhost:30000');
