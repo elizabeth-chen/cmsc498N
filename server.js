@@ -50,8 +50,8 @@ setInterval(getWinnerCount, 33);
 
 //send out update to all the current clients of each user's location and marks
 var item = {
-  x: Math.floor(Math.random() * 600)+400,
-  y: Math.floor(Math.random() * 600)+400,
+  x: 500,
+  y: 500,
   type: Math.floor(Math.random() * 6)
 };
 

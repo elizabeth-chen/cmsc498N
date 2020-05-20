@@ -145,8 +145,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:30000');
+  //socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -510,7 +510,7 @@ function draw() {
       pop();
     }
 
-    if(scaleCount > .5) {
+    if(scaleCount > .8) {
       scale(scaleCount);
       scaleCount=scaleCount-.007;
       imageOpacity=imageOpacity-7;
