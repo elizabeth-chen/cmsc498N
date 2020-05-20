@@ -22,6 +22,12 @@ var users = [];
 var marks = [];
 var mostItems = 0;
 
+var item = {
+  x: parseInt(Math.random(100, 200)),
+  y: parseInt(Math.random(100, 200)),
+  type: parseInt(Math.random(0, 6))
+}
+
 function User(id, x, y, dir, items, offset) {
   this.id = id;
   this.x = x;
@@ -51,6 +57,7 @@ setInterval(getWinnerCount, 33);
 function heartbeat() {
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
+  io.sockets.emit('heartbeatItem', item);
 }
 
 function getWinnerCount() {
@@ -109,6 +116,15 @@ io.sockets.on('connection',
     socket.on('new mark', function(data) {
       var mark = new Mark(data.x, data.y, data.type, data.angle);
       marks.push(mark)
+    });
+
+    //new item
+    socket.on('new item', function(data) {
+      item = {
+        x: data.x,
+        y:data.y,
+        type: data.type
+      }
     });
 
     socket.on('disconnect', function() {

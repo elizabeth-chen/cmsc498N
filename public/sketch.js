@@ -34,6 +34,7 @@ var crash_sound;
 var grabItem_sound;
 var corona;
 
+
 var item;
 var object;
 var arrow;
@@ -47,6 +48,7 @@ var arrowVal;
 //zooming out variables
 var scaleCount = 1;
 var imageOpacity = 255;
+
 
 function preload(){
 
@@ -145,8 +147,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  socket = io.connect('http://cleft.fun:30000');
-  // socket = io.connect('http://localhost:30000');
+  //socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -166,6 +168,10 @@ function setup() {
 
   socket.on('heartbeatMarks', function(data) {
     marks = data;
+  });
+
+  socket.on('heartbeatItem', function(data) {
+    item = data;
   });
 
   //scrolling setup code
@@ -200,7 +206,7 @@ function setup() {
   skipButton.mousePressed(skip_intro);
   skipButton.position(windowWidth/2+ intro.width/4 , windowHeight/2 + intro.height/2.5)
 
-	item = createVector(windowWidth/2, windowHeight/2);
+	//item = createVector(windowWidth/2, windowHeight/2);
 	object = createVector(mouseX,mouseY);
 	arrow = createVector(mouseX+20, mouseY-20);
 
@@ -282,26 +288,30 @@ function draw() {
       drawFrame();
       trackItems();
       testArrow.display();
-    
+
 
     push(); //------------WORLD SCROLLING SET UP--------
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
 
     translate(worldOffset.x/4,worldOffset.y/4);
     drawFrame();
-      
-      
+
+
 
       //check if cart has picked up an item
-      var d2 = dist(x,y,itemX,itemY);
+      var d2 = dist(x,y,item.x,item.y);
       if ( d2 < 40) {
-        itemX = random(10, width-150);
-        itemY = random(10, height-150);
         numItems++;
-        rand = int(random(0,supplies.length));
+        var newItem = {
+          x: random(50, width-200),
+          y: random(50, height-200),
+          type: int(random(0,supplies.length)),
+        };
+
+        socket.emit('new item', newItem);
         // grabItem_sound.play();
       }
-      
+
       arrowVal = atan2((itemY) - y,	(itemX) - x); //+worldOffset.y+(height/2) +worldOffset.x+(width/2))
 
     //check all carts for collisions
@@ -329,7 +339,7 @@ function draw() {
            vy *= (-1);
            users[i].x -= vx;
            users[i].y -= vy;
-           
+
           //  crash_sound.play();
          }
        }
@@ -344,14 +354,14 @@ function draw() {
         dy = mouseY-y;
         vec.set(dx,dy);
         vec.normalize();
-      
-      
+
+
         //Make the mouse steady
         if (dist(x,y,mouseX,mouseY) < 45)
           d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
         else
           d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
-      
+
 
       //cart physics
       vx+=(vec.x*d);
@@ -379,7 +389,7 @@ function draw() {
         dir = "right";
       else
         dir = "left";
-    
+
       // if( mouseX > x+35) {
         // if(scaleCount < 1) {
         //   // if zooming out, fade image
@@ -417,10 +427,10 @@ function draw() {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        image(supplies[rand],itemX,itemY, 100,80);
+        image(supplies[item.type],item.x,item.y, 80,80);
         pop();
       } else {
-        image(supplies[rand],itemX,itemY, 100,80);
+        image(supplies[item.type],item.x,item.y, 80,80);
       }
 
 
@@ -461,10 +471,10 @@ function draw() {
 
     // push();
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-    
 
 
-    fill(200,120,120);  //idk what this is doing. filling nothing. 
+
+    fill(200,120,120);  //idk what this is doing. filling nothing.
 
     //draw this user's cart
     if(numItems != 0 && numItems >= mostItems) {
@@ -476,7 +486,7 @@ function draw() {
     // //draw all of the carts in the game
     //     for (var i = users.length - 1; i >= 0; i--) {
     //         var id = users[i].id;
-      
+
     //         //only want to draw carts from server that are not this user's cart
     //         if(id != socket.id) {
     //           if(scaleCount < 1) {
@@ -503,8 +513,8 @@ function draw() {
 
     // push();
 
-    
-                            /// BOUNDS 
+
+                            /// BOUNDS
     translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
     //Mouse left bound
     if(mouseX < 150 && worldOffset.x < canvasSize){
@@ -555,7 +565,7 @@ function draw() {
       y = windowHeight -100
     }
 
-                            /// END BOUNDS 
+                            /// END BOUNDS
 
     // //current cart's data to send to the server
     // var cartData = {
@@ -597,7 +607,7 @@ function draw() {
 
 
   // pop();//-----------------------------
-  
+
 }
 
 
