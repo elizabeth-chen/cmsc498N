@@ -142,8 +142,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:30000');
+  // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -249,12 +249,29 @@ function draw() {
       background(255);
       skipButton.hide();
 
-      drawFrame();
-      trackItems();
+
+      //zoom out
+      // if(marks.length == 100) {
+      //   button_mouse.hide();
+      //   button_key.hide();
+      //   if(scaleCount > .5) {
+      //     scale(scaleCount);
+      //     scaleCount=scaleCount-.007;
+      //     imageOpacity=imageOpacity-7;
+      //   } else {
+      //     scale(scaleCount);
+      //     showEndScreen();
+      //     screen = 3;
+      //   }
+      // }
+
+      // drawFrame();
+
 
     push(); //------------WORLD SCROLLING SET UP--------
-    translate(worldOffset.x/4,worldOffset.y/4);
-    drawFrame();
+    translate(worldOffset.x/5,worldOffset.y/5);
+      drawFrame();
+      trackItems();
 
       //check if cart has picked up an item
       if(item!=null)
@@ -434,20 +451,20 @@ function draw() {
 
 
     //left
-    if(x < 10 ){ //&& worldOffset.x < canvasSize){
-      x = 10
+    if(x < 50 ){ //&& worldOffset.x < canvasSize){
+      x = 50
     }
     //right
-    if(x > windowWidth - 100 ){ //&& worldOffset.x > -canvasSize){
-      x = windowWidth - 100
+    if(x > windowWidth - 50 ){ //&& worldOffset.x > -canvasSize){
+      x = windowWidth - 50
     }
     //up
-    if(y < 20 ){ //&& worldOffset.y < canvasSize){
-      y = 20
+    if(y < 50 ){ //&& worldOffset.y < canvasSize){
+      y = 50
     }
     //down
-    if(y > windowHeight- 100){ //} && worldOffset.y > -canvasSize){
-      y = windowHeight -100
+    if(y > windowHeight- 50){ //} && worldOffset.y > -canvasSize){
+      y = windowHeight -50
     }
 
     //send this user's data to server
@@ -531,11 +548,12 @@ function collision(x1,y1,x2,y2) {
 
 //Item text
 function trackItems(){
-	textSize(20);
-	fill(19, 166, 8);
+	textSize(30);
+  // fill(19, 166, 8);
+  fill(255);
 	textFont('Helvatica');
-	text(("Items: "+ numItems), (windowWidth/4), 20);
-  text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), 20);
+	text(("Items: "+ numItems), (windowWidth/4), -30);
+  text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), -30);
 }
 
 
