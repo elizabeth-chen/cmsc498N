@@ -588,7 +588,13 @@ function showEndScreen() {
   button_mouse.show();
   skipButton.show();
 
-  socket = io.connect('http://cleft.fun:30000');
+  //initial cart
+  var data = {
+    x: mouseX,
+    y: mouseY,
+    dir: "left",
+    items: 0
+  };
 
   socket.emit('start', data);
   socket.on('heartbeatUsers', function(data) {
@@ -602,4 +608,5 @@ function showEndScreen() {
   socket.on('heartbeatItem', function(data) {
     item = data;
   });
+
 }
