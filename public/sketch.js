@@ -477,12 +477,10 @@ function draw() {
   //end of game screen
   } else {
     scale(scaleCount);
-    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
 
     //draw marks
     for (var i = marks.length - 1; i >= 0; i--) {
       push();
-        // rotate(marks[i].angle);
         image(markTypes[marks[i].type], marks[i].x, marks[i].y, 160,160);
       pop();
     }
