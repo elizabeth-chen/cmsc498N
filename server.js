@@ -56,9 +56,6 @@ var item = {
 };
 
 function heartbeat() {
-  
-  
-
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
   io.sockets.emit('heartbeatItem', item);
