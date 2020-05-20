@@ -192,7 +192,7 @@ function setup() {
   button_key.style('background-color', col);
   button_key.style('color', 'white');
   button_key.size(100,25);
-  button_key.position(windowWidth/2+30 , windowHeight/2 +120);
+  button_key.position(windowWidth/2 - 30, windowHeight/2 +100);
   button_key.mousePressed(resetPage);
   button_key.hide();
 
@@ -492,6 +492,11 @@ function draw() {
   button_key.show();
 } else {
     background(255);
+    textSize(30);
+    // fill(19, 166, 8);
+    fill(0);
+    textFont('Helvatica');
+    text(("You didn't leave a mess, you left a masterpiece."), (windowWidth/2));
 
     scale(scaleCount);
 
