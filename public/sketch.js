@@ -74,6 +74,8 @@ function preload(){
   cartR4 = loadImage('/carts/cartRightBag4.png');
   cartL4 = loadImage('/carts/cartLeftBag4.png');
   crown = loadImage('/carts/crown.png');
+  l_man = loadImage('/carts/leftman.png');
+  r_man = loadImage('/carts/rightman.png');
 
   //splash images
   mark1 = loadImage('/marks/mark1.png');
@@ -370,6 +372,7 @@ function draw() {
 
       //draw current cart
       drawCart(x,y, dir, numItems, hasMost);
+      drawPerson(x, y, dir);
 
       //display current item.
       if(scaleCount < 1) {
@@ -528,6 +531,15 @@ function drawCart(x, y, dir, items, isWinning){
   }
   if(isWinning) {
     image(crown,x-5,y-40,60,60);
+  }
+}
+
+// draw person next to current user 
+function drawPerson(x, y, dir) {
+  if(dir == "right") {
+    image(r_man, x-60, y-14, 100, 100);
+  } else {
+    image(l_man, x+60, y-14, 100, 100);
   }
 }
 
