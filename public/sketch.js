@@ -9,6 +9,8 @@ var marks = [];
 var supplies = [];
 var inCollision = false;
 var collisionTimer = 0;
+var itemTimer = 0;
+var foundItem = false;
 var numItems;
 var markTypes = [];
 var mostItems = 0;
@@ -34,16 +36,9 @@ var crash_sound;
 var grabItem_sound;
 var corona;
 
-
 var item;
 var object;
-var arrow;
 var range;
-
-//direction arrow variables
-var arrowImage;
-var testArrow;
-var arrowVal;
 
 //zooming out variables
 var scaleCount = 1;
@@ -208,21 +203,6 @@ function setup() {
 
 	//item = createVector(windowWidth/2, windowHeight/2);
 	object = createVector(mouseX,mouseY);
-	arrow = createVector(mouseX+20, mouseY-20);
-
-	// Draw arrow
-	imageMode(CENTER);
-	let resolution = 50;
-	arrowImage = createGraphics(resolution, resolution);
-	arrowImage.beginShape(LINES);
-	arrowImage.vertex(0, 0.5 * resolution);
-	arrowImage.vertex(resolution, 0.5 * resolution);
-	arrowImage.vertex(resolution, 0.5 * resolution);
-	arrowImage.vertex(0.5 * resolution, 0.8 * resolution);
-	arrowImage.vertex(resolution, 0.5 * resolution);
-	arrowImage.vertex(0.5 * resolution, 0.2 * resolution);
-	arrowImage.endShape();
-	testArrow = new Arrow();
 
   // windowResized();
 }
@@ -287,21 +267,15 @@ function draw() {
 
       drawFrame();
       trackItems();
-      testArrow.display();
-
 
     push(); //------------WORLD SCROLLING SET UP--------
-    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-
     translate(worldOffset.x/4,worldOffset.y/4);
     drawFrame();
-
-
 
       //check if cart has picked up an item
       if(item!=null)
         var d2 = dist(x,y,item.x,item.y);
-      if ( d2 < 40) {
+      if ( !foundItem && d2 < 40) {
         numItems++;
         var newItem = {
           x: random(50, width-200),
@@ -311,9 +285,10 @@ function draw() {
 
         socket.emit('new item', newItem);
         // grabItem_sound.play();
-      }
 
-      arrowVal = atan2((itemY) - y,	(itemX) - x); //+worldOffset.y+(height/2) +worldOffset.x+(width/2))
+        foundItem = true;
+        itemTimer = 0;
+      }
 
     //check all carts for collisions
      for (var i = users.length - 1; i >= 0; i--) {
@@ -326,8 +301,8 @@ function draw() {
 
            //create new paint splahs
            var mark = {
-             x: x, //-worldOffset.x-(width/2),
-             y: y, //-worldOffset.y-(height/2),
+             x: x,
+             y: y,
              type: t,
              angle: a
            };
@@ -346,11 +321,7 @@ function draw() {
        }
      }
 
-    // push(); //------------WORLD SCROLLING SET UP--------
-      // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-      // make the cart follow the mouse
 
-      // if(mouseX > 0 && mouseY > 0 && mouseX < width && mouseY <height){
         dx = mouseX-x;
         dy = mouseY-y;
         vec.set(dx,dy);
@@ -382,7 +353,6 @@ function draw() {
           items: numItems,
         };
       }
-    // }
 
       //decide which direction cart should be facing
       var dir;
@@ -391,33 +361,10 @@ function draw() {
       else
         dir = "left";
 
-      // if( mouseX > x+35) {
-        // if(scaleCount < 1) {
-        //   // if zooming out, fade image
-        //   push();
-        //   tint(255,imageOpacity);
-        //   drawCart(x,y,"right", numItems, hasMost);
-        //   pop();
-        // } else {
-          // drawCart(x,y,"right", numItems, hasMost);
-        // }
-      // }
-      // else {
-        // if(scaleCount < 1) {
-        //   //if zooming out, fade image
-        //   push();
-        //   tint(255,imageOpacity);
-        //   drawCart(x,y,"left", numItems, hasMost);
-        //   pop();
-        // } else {
-          // drawCart(x,y,"left", numItems, hasMost);
-        // }
-      // }
-
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
           // rotate(marks[i].angle);
-          image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
+          image(markTypes[marks[i].type], marks[i].x, marks[i].y, 110,110);
       }
 
       //draw current cart
@@ -428,10 +375,10 @@ function draw() {
         //if zooming out, fade image
         push();
         tint(255,imageOpacity);
-        image(supplies[item.type],item.x,item.y, 80,80);
+        image(supplies[item.type],item.x,item.y, 80,60);
         pop();
       } else {
-        image(supplies[item.type],item.x,item.y, 80,80);
+        image(supplies[item.type],item.x,item.y, 80,60);
       }
 
 
@@ -453,27 +400,15 @@ function draw() {
         }
       } //end draw all the carts
 
-
       //ensures carts don't trigger collision too many times while touching
       collisionTimer++;
       if(collisionTimer > 20) {
         inCollision = false;
       }
-
-    // pop();//-----------------------------
-
-
-
-    // make the cart follow the mouse
-    // dx = mouseX-x;
-    // dy = mouseY-y;
-    // vec.set(dx,dy);
-    // vec.normalize();
-
-    // push();
-    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-
-
+      itemTimer++;
+      if(itemTimer > 20) {
+        foundItem = false;
+      }
 
     fill(200,120,120);  //idk what this is doing. filling nothing.
 
@@ -484,38 +419,6 @@ function draw() {
       hasMost = false;
     }
 
-    // //draw all of the carts in the game
-    //     for (var i = users.length - 1; i >= 0; i--) {
-    //         var id = users[i].id;
-
-    //         //only want to draw carts from server that are not this user's cart
-    //         if(id != socket.id) {
-    //           if(scaleCount < 1) {
-    //             push();
-    //             tint(255, imageOpacity);
-    //             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
-    //             pop();
-    //           }
-    //           else {
-    //             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
-    //           }
-    //         }
-    //       } //end draw all the carts
-
-    // //current cart's data to send to the server
-    // var cartData = {
-    //   x: x,
-    //   y: y,
-    //   dir: dir,
-    //   items: numItems,
-    // };
-
-    // pop();
-
-    // push();
-
-
-                            /// BOUNDS
     translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
     //Mouse left bound
     if(mouseX < 150 && worldOffset.x < canvasSize){
@@ -544,11 +447,8 @@ function draw() {
       worldBoundsMax.y+=speed;
       worldBoundsMin.y+=speed;
     }
-    // pop();
 
-    //Other bounds
-    // console.log("x: ", x, " y: ", y);
-    console.log("canvas: ", canvasSize-worldOffset.x, " world: ", worldOffset.x);
+
     //left
     if(x < 10 ){ //&& worldOffset.x < canvasSize){
       x = 10
@@ -566,26 +466,8 @@ function draw() {
       y = windowHeight -100
     }
 
-                            /// END BOUNDS
-
-    // //current cart's data to send to the server
-    // var cartData = {
-    //   x: x,
-    //   y: y,
-    //   dir: dir,
-    //   items: numItems,
-    // };
-
-
     //send this user's data to server
     socket.emit('update', cartData);
-
-    // if(scaleCount > .9) {
-    //   // display the items count.
-    //   trackItems();
-    //   // testArrow.update();
-    //   testArrow.display();
-    // }
 
     if(scaleCount == .5) {
       // showEndScreen();
@@ -601,13 +483,10 @@ function draw() {
     for (var i = marks.length - 1; i >= 0; i--) {
       push();
         // rotate(marks[i].angle);
-        image(markTypes[marks[i].type], marks[i].x, marks[i].y, 140,140);
+        image(markTypes[marks[i].type], marks[i].x, marks[i].y, 110,110);
       pop();
     }
   }
-
-
-  // pop();//-----------------------------
 
 }
 
@@ -615,29 +494,29 @@ function draw() {
 function drawCart(x, y, dir, items, isWinning){
   if(dir == "right") {
     if(items < 10)
-      image(cartR,x,y, 85, 85);
+      image(cartR,x,y, 65, 65);
     else if (items < 20)
-      image(cartR1,x,y, 90, 90);
+      image(cartR1,x,y, 70, 70);
     else if (items < 25)
-      image(cartR2,x,y, 90, 90);
+      image(cartR2,x,y, 70, 70);
     else if (items < 30)
-      image(cartR3,x,y, 90, 90);
+      image(cartR3,x,y, 70, 70);
     else
-      image(cartR4,x,y, 90, 90);
+      image(cartR4,x,y, 70, 70);
   } else {
     if(items < 10)
-      image(cartL,x,y, 85, 85);
+      image(cartL,x,y, 65, 65);
     else if (items < 20)
-      image(cartL1,x,y, 90, 90);
+      image(cartL1,x,y, 70, 70);
     else if (items < 25)
-      image(cartL2,x,y, 90, 90);
+      image(cartL2,x,y, 70, 70);
     else if (items < 30)
-      image(cartL3,x,y, 90, 90);
+      image(cartL3,x,y, 70, 70);
     else
-      image(cartL4,x,y, 90, 90);
+      image(cartL4,x,y, 70, 70);
   }
   if(isWinning) {
-    image(crown,x-5,y-40,70,70);
+    image(crown,x-5,y-40,60,60);
   }
 }
 
@@ -661,8 +540,8 @@ function trackItems(){
 	textSize(20);
 	fill(19, 166, 8);
 	textFont('Helvatica');
-	text(("Items: "+ numItems), (windowWidth/4), 30);
-  text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), 30);
+	text(("Items: "+ numItems), (windowWidth/4), 20);
+  text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), 20);
 }
 
 
@@ -686,31 +565,6 @@ function skip_intro(){
   button_mouse.hide();
   skipButton.hide();
 }
-
-
-//directional arrow
-class Arrow {
-	constructor() {
-		arrowVal = atan2(
-			height * 0.5,
-			width * 0.5
-		)
-	}
-
-	update() {
-    fill(0);
-		arrowVal = atan2(itemY - y,	itemX - x)
-	}
-
-	display() {
-		push()
-		translate(width * 0.5, height * 0.05)
-		rotate(arrowVal)
-		image(arrowImage, 0, 0)
-		pop()
-	}
-}
-
 
 function drawFrame(){
   fill(0);

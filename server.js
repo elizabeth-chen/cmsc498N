@@ -122,7 +122,7 @@ io.sockets.on('connection',
     socket.on('new item', function(data) {
       item = {
         x: data.x,
-        y:data.y,
+        y: data.y,
         type: data.type
       }
     });
