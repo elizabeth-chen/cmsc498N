@@ -264,22 +264,33 @@ function draw() {
       skipButton.hide();
 
       //zoom out
-      if(marks.length == 100) {
-        button_mouse.hide();
-        button_key.hide();
-        if(scaleCount > .5) {
-          scale(scaleCount);
-          scaleCount=scaleCount-.007;
-          imageOpacity=imageOpacity-7;
-        } else {
-          scale(scaleCount);
-          showEndScreen();
-          screen = 3;
-        }
-      }
+      // if(marks.length == 100) {
+      //   button_mouse.hide();
+      //   button_key.hide();
+      //   if(scaleCount > .5) {
+      //     scale(scaleCount);
+      //     scaleCount=scaleCount-.007;
+      //     imageOpacity=imageOpacity-7;
+      //   } else {
+      //     scale(scaleCount);
+      //     showEndScreen();
+      //     screen = 3;
+      //   }
+      // }
+
+
+    
+    
+
+    push(); //------------WORLD SCROLLING SET UP--------
+    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+    translate(worldOffset.x/2,worldOffset.y/2);
+      trackItems();
+      testArrow.display();
+      
 
       //check if cart has picked up an item
-      var d2 = dist(x,y,itemX+worldOffset.x+(width/2),itemY+worldOffset.y+(height/2));
+      var d2 = dist(x,y,itemX,itemY);
       if ( d2 < 40) {
         itemX = random(-canvasSize+200, canvasSize-200);
         itemY = random(-canvasSize+200, canvasSize-200);
@@ -288,7 +299,7 @@ function draw() {
         // grabItem_sound.play();
       }
       
-      arrowVal = atan2((itemY+worldOffset.y+(height/2)) - y,	(itemX+worldOffset.x+(width/2)) - x);
+      arrowVal = atan2((itemY) - y,	(itemX) - x); //+worldOffset.y+(height/2) +worldOffset.x+(width/2))
 
     //check all carts for collisions
      for (var i = users.length - 1; i >= 0; i--) {
@@ -301,8 +312,8 @@ function draw() {
 
            //create new paint splahs
            var mark = {
-             x: x-worldOffset.x-(width/2),
-             y: y-worldOffset.y-(height/2),
+             x: x, //-worldOffset.x-(width/2),
+             y: y, //-worldOffset.y-(height/2),
              type: t,
              angle: a
            };
@@ -315,32 +326,73 @@ function draw() {
            vy *= (-1);
            users[i].x -= vx;
            users[i].y -= vy;
+           
           //  crash_sound.play();
          }
        }
      }
 
-    dx = mouseX-x;
-    dy = mouseY-y;
-    vec.set(dx,dy);
-    vec.normalize();
+    // push(); //------------WORLD SCROLLING SET UP--------
+      // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+      // make the cart follow the mouse
+      dx = mouseX-x;
+      dy = mouseY-y;
+      vec.set(dx,dy);
+      vec.normalize();
 
-    //Make the mouse steady
-    if (dist(x,y,mouseX,mouseY) < 45)
-      d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-    else
-      d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+      //Make the mouse steady
+      if (dist(x,y,mouseX,mouseY) < 45)
+        d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
+      else
+        d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
 
-    //cart physics
-    vx+=(vec.x*d);
-    vy+=(vec.y*d);
-    vx*=drag;
-    vy*=drag;
-    x+=vx;
-    y+=vy;
+      //cart physics
+      vx+=(vec.x*d);
+      vy+=(vec.y*d);
+      vx*=drag;
+      vy*=drag;
+      x+=vx;
+      y+=vy;
+      //end follow the mouse
 
-    push(); //------------WORLD SCROLLING SET UP--------
-      translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+      //current cart's data to send to the server
+      var cartData = {
+        x: x,
+        y: y,
+        dir: dir,
+        items: numItems,
+      };
+
+      //decide which direction cart should be facing
+      var dir;
+      if( mouseX > x+35)
+        dir = "right";
+      else
+        dir = "left";
+      drawCart(x,y, dir, numItems, hasMost);
+    
+      // if( mouseX > x+35) {
+        // if(scaleCount < 1) {
+        //   // if zooming out, fade image
+        //   push();
+        //   tint(255,imageOpacity);
+        //   drawCart(x,y,"right", numItems, hasMost);
+        //   pop();
+        // } else {
+          // drawCart(x,y,"right", numItems, hasMost);
+        // }
+      // }
+      // else {
+        // if(scaleCount < 1) {
+        //   //if zooming out, fade image
+        //   push();
+        //   tint(255,imageOpacity);
+        //   drawCart(x,y,"left", numItems, hasMost);
+        //   pop();
+        // } else {
+          // drawCart(x,y,"left", numItems, hasMost);
+        // }
+      // }
 
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
@@ -378,70 +430,35 @@ function draw() {
         }
       } //end draw all the carts
 
-      //decide which direction cart should be facing
-      var dir;
-      if( mouseX > x+35)
-        dir = "right";
-      else
-        dir = "left";
 
       //ensures carts don't trigger collision too many times while touching
       collisionTimer++;
       if(collisionTimer > 20) {
         inCollision = false;
-    }
+      }
 
     // pop();//-----------------------------
 
+
+
+    // make the cart follow the mouse
     // dx = mouseX-x;
     // dy = mouseY-y;
     // vec.set(dx,dy);
     // vec.normalize();
 
-    // //Make the mouse steady
-    // if (dist(x,y,mouseX,mouseY) < 45)
-    //   d = map(dist(x,y,mouseX,mouseY),0,width,0,0);
-    // else
-    //   d = map(dist(x,y,mouseX,mouseY),0,width,charge,0);
+    // push();
+    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+    
 
-    // //cart physics
-    // vx+=(vec.x*d);
-    // vy+=(vec.y*d);
-    // vx*=drag;
-    // vy*=drag;
-    // x+=vx;
-    // y+=vy;
 
-    fill(200,120,120);
+    fill(200,120,120);  //idk what this is doing. filling nothing. 
 
     //draw this user's cart
     if(numItems != 0 && numItems >= mostItems) {
       hasMost = true;
     } else {
       hasMost = false;
-    }
-    
-    if( mouseX > x+35) {
-      if(scaleCount < 1) {
-        // if zooming out, fade image
-        push();
-        tint(255,imageOpacity);
-        drawCart(x,y,"right", numItems, hasMost);
-        pop();
-      } else {
-        drawCart(x,y,"right", numItems, hasMost);
-      }
-    }
-    else {
-      if(scaleCount < 1) {
-        //if zooming out, fade image
-        push();
-        tint(255,imageOpacity);
-        drawCart(x,y,"left", numItems, hasMost);
-        pop();
-      } else {
-        drawCart(x,y,"left", numItems, hasMost);
-      }
     }
 
     // //draw all of the carts in the game
@@ -461,8 +478,20 @@ function draw() {
     //           }
     //         }
     //       } //end draw all the carts
-    
 
+    // //current cart's data to send to the server
+    // var cartData = {
+    //   x: x,
+    //   y: y,
+    //   dir: dir,
+    //   items: numItems,
+    // };
+
+    // pop();
+
+    // push();
+                            /// BOUNDS 
+    translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
     //Mouse left bound
     if(mouseX < 150 && worldOffset.x < canvasSize){
       worldOffset.x+=speed;
@@ -490,40 +519,47 @@ function draw() {
       worldBoundsMax.y+=speed;
       worldBoundsMin.y+=speed;
     }
+    // pop();
 
     //Other bounds
-    if(x > windowWidth -100){
-      x = windowWidth - 100
-    }
-    if(x < 100){
+    
+    //left
+    if(x < 100 ){ //&& worldOffset.x < canvasSize){
       x = 100
     }
-    if(y < 75){
+    //right
+    if(x > windowWidth -100 ){ //&& worldOffset.x > -canvasSize){
+      x = windowWidth - 100
+    }
+    //up
+    if(y < 75 ){ //&& worldOffset.y < canvasSize){
       y = 75
     }
-    if(y > windowHeight-100){
+    //down
+    if(y > windowHeight-100){ //} && worldOffset.y > -canvasSize){
       y = windowHeight -100
     }
 
-    //current cart's data to send to the server
-    var cartData = {
-      x: x,
-      y: y,
-      dir: dir,
-      items: numItems,
-    };
+                            /// END BOUNDS 
 
-    pop();
+    // //current cart's data to send to the server
+    // var cartData = {
+    //   x: x,
+    //   y: y,
+    //   dir: dir,
+    //   items: numItems,
+    // };
+
 
     //send this user's data to server
     socket.emit('update', cartData);
 
-    if(scaleCount > .9) {
-      // display the items count.
-      trackItems();
-      // testArrow.update();
-      testArrow.display();
-    }
+    // if(scaleCount > .9) {
+    //   // display the items count.
+    //   trackItems();
+    //   // testArrow.update();
+    //   testArrow.display();
+    // }
 
     if(scaleCount == .5) {
       // showEndScreen();
@@ -533,7 +569,7 @@ function draw() {
   //end of game screen
   } else {
     scale(scaleCount);
-    translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
+    // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
 
     //draw marks
     for (var i = marks.length - 1; i >= 0; i--) {
@@ -543,6 +579,9 @@ function draw() {
       pop();
     }
   }
+
+
+  pop();//-----------------------------
 }
 
 
