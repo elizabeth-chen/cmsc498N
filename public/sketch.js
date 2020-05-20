@@ -145,8 +145,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  socket = io.connect('http://cleft.fun:30000');
-  //socket = io.connect('http://localhost:3000');
+  //socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -469,8 +469,8 @@ function draw() {
 
     //current cart's data to send to the server
     var cartData = {
-      x: x,
-      y: y,
+      x: x+worldOffset.x,
+      y: yx+worldOffset.y,
       dir: dir,
       items: numItems,
     };
