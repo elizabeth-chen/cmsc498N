@@ -455,7 +455,7 @@ function draw() {
     socket.emit('update', cartData);
 
     //zoom out
-    if(marks.length == 400) {
+    if(marks.length == 200) {
       //button_mouse.hide();
       //button_key.hide();
       screen = 3;
