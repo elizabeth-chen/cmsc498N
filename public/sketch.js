@@ -145,8 +145,8 @@ function setup() {
   markTypes.push(mark4);
   markTypes.push(mark5);
 
-  //socket = io.connect('http://cleft.fun:30000');
-  socket = io.connect('http://localhost:30000');
+  socket = io.connect('http://cleft.fun:30000');
+  //socket = io.connect('http://localhost:30000');
 
   openSimplex = new OpenSimplexNoise2D(Date.now());
 
@@ -350,7 +350,7 @@ function draw() {
           if(scaleCount < 1) {
             push();
             tint(255, imageOpacity);
-            console.log('cart ' + i+ " x: " + users[i].x + 'cart ' + i+ "y: " users[i].y);
+          //  console.log('cart ' + i+ " x: " + users[i].x + 'cart ' + i+ "y: " users[i].y);
             drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
             pop();
           }
