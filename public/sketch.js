@@ -282,8 +282,8 @@ function draw() {
       if ( !foundItem && d2 < 40) {
         numItems++;
         var newItem = {
-          x: random(50, width-200),
-          y: random(50, height-300),
+          x: random(50, 500),
+          y: random(50, 500),
           type: int(random(0,supplies.length)),
         };
 
@@ -474,7 +474,7 @@ function draw() {
     socket.emit('update', cartData);
 
     //zoom out
-    if(marks.length == 10) {
+    if(marks.length == 400) {
       //button_mouse.hide();
       //button_key.hide();
       screen = 3;
@@ -583,7 +583,7 @@ function trackItems(){
 	textSize(30);
   // fill(19, 166, 8);
   fill(255);
-	textFont('Helvatica');
+	textFont('monospace');
 	text(("Items: "+ numItems), (windowWidth/4), -30);
   text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), -30);
 }
@@ -618,15 +618,6 @@ function drawFrame(){
   square(-canvasSize, height, canvasSize*2+width, canvasSize);      //down
   square(width, -canvasSize, canvasSize, canvasSize*2+width);  //right
 }
-
-function windowResized() {
-  const css = getComputedStyle(canvas.parentElement),
-        marginWidth = round(float(css.marginLeft) + float(css.marginRight)),
-        marginHeight = round(float(css.marginTop) + float(css.marginBottom)),
-        w = windowWidth - marginWidth - (windowWidth/20), h = windowHeight - marginHeight - (windowHeight/20);
-
-  resizeCanvas(w, h, true);
-} 
 
 function resetPage(){
   // redraw();
