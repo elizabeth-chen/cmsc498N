@@ -188,11 +188,11 @@ function setup() {
   button_mouse.position(windowWidth/2-45, windowHeight/2 +120);
   button_mouse.mousePressed(mouse);
 
-  button_key = createButton('Reset Game');
+  button_key = createButton('Play Again');
   button_key.style('background-color', col);
   button_key.style('color', 'white');
   button_key.size(100,25);
-  button_key.position(windowWidth/2+30 , windowHeight/2 +120);
+  button_key.position(windowWidth/2 - 100, windowHeight/2 +200);
   button_key.mousePressed(resetPage);
   button_key.hide();
 
@@ -283,7 +283,7 @@ function draw() {
         numItems++;
         var newItem = {
           x: random(50, width-200),
-          y: random(50, height-200),
+          y: random(50, height-300),
           type: int(random(0,supplies.length)),
         };
 
@@ -492,10 +492,10 @@ function draw() {
 
   button_key.show();
 
-  textSize(30);
+  textSize(50);
   fill(0);
 	textFont('Helvatica');
-	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), -30);
+	text(("Wow! You didn't leave a mess, you left a masterpiece."), (windowWidth/4), 100);
 
 
 } else {
@@ -510,7 +510,7 @@ function draw() {
       pop();
     }
 
-    if(scaleCount > .5) {
+    if(scaleCount > .7) {
       scale(scaleCount);
       scaleCount=scaleCount-.007;
       imageOpacity=imageOpacity-7;
