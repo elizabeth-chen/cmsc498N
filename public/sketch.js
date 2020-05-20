@@ -18,7 +18,7 @@ var hasMost = false;
 var myPos;
 var worldOffset;
 var worldBoundsMin,worldBoundsMax;
-var canvasSize = 500;
+var canvasSize = 300;
 var screen = 0, mode = 1;
 var s = 0;
 
@@ -144,6 +144,8 @@ function setup() {
   markTypes.push(mark3);
   markTypes.push(mark4);
   markTypes.push(mark5);
+  markTypes.push(mark6);
+
 
   socket = io.connect('http://cleft.fun:30000');
   //socket = io.connect('http://localhost:30000');
