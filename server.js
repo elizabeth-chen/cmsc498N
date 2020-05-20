@@ -22,13 +22,14 @@ var users = [];
 var marks = [];
 var mostItems = 0;
 
-function User(id, x, y, dir, items) {
+function User(id, x, y, dir, items, offset) {
   this.id = id;
   this.x = x;
   this.y = y;
   this.dir = dir;
   this.items = items;
   this.isWinning = false;
+  this.offset = offset;
 }
 
 function Mark(x, y, type, angle) {
@@ -67,7 +68,7 @@ io.sockets.on('connection',
     //when user first enters the game, add the user to list of all users
     socket.on('start', function(data) {
       console.log(socket.id + ' ' + data.x + ' ' + data.y);
-      var user = new User(socket.id, data.x, data.y, data.dir, data.items);
+      var user = new User(socket.id, data.x, data.y, data.dir, data.items, data.offset);
       users.push(user);
     });
 
@@ -94,6 +95,7 @@ io.sockets.on('connection',
           user.y = data.y;
           user.dir = data.dir;
           user.items = data.items;
+          user.offset = data.offset;
         }
     });
 

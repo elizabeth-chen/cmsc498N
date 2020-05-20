@@ -262,7 +262,7 @@ function draw() {
       background(255);
 
       //zoom out
-      if(marks.length == 30) {
+      if(marks.length > 30) {
         button_mouse.hide();
         button_key.hide();
         if(scaleCount > .5) {
@@ -357,8 +357,8 @@ function draw() {
             pop();
           }
           else {
-            nX = x*windowWidth;
-            nY = y*windowHeight;
+            nX = users[i].x*windowWidth+users[i].offset.x;
+            nY = users[i].y*windowHeight+users[i].offset.y;
             drawCart(nX, nY, users[i].dir, users[i].items, users[i].isWinning);
           }
         }
@@ -471,14 +471,15 @@ function draw() {
       y = windowHeight -100
     }
 
-    nX = x/windowWidth-(worldOffset.x/windowWidth);
-    nY = y/windowHeight-(worldOffset.y/windowHeight);
+    nX = x/windowWidth;
+    nY = y/windowHeight;
     //current cart's data to send to the server
     var cartData = {
       x: nX,
       y: nY,
       dir: dir,
       items: numItems,
+      offset: worldOffset,
     };
 
     console.log('this x: ' + x + 'this y: ' + y);
