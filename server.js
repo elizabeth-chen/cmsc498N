@@ -22,7 +22,7 @@ var users = [];
 var marks = [];
 var mostItems = 0;
 
-var item;
+// var item;va
 
 function User(id, x, y, dir, items, offset) {
   this.id = id;
@@ -49,15 +49,15 @@ setInterval(heartbeat, 33);
 setInterval(getWinnerCount, 33);
 
 //send out update to all the current clients of each user's location and marks
+var item = {
+  x: Math.floor(Math.random() * 600)+400,
+  y: Math.floor(Math.random() * 600)+400,
+  type: Math.floor(Math.random() * 6)
+};
+
 function heartbeat() {
-  x = Math.floor(Math.random() * 600)+400;
-  y = Math.floor(Math.random() * 600)+400;
-  type =  Math.floor(Math.random() * 6);
-  item = {
-    x: x,
-    y: y,
-    type: type
-  };
+  
+  
 
   io.sockets.emit('heartbeatUsers', users);
   io.sockets.emit('heartbeatMarks', marks);
