@@ -286,7 +286,7 @@ function draw() {
 
     push(); //------------WORLD SCROLLING SET UP--------
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
-    translate(worldOffset.x/4,worldOffset.y/4);
+    // translate(worldOffset.x/4,worldOffset.y/4);
 
     drawFrame();
       
@@ -295,8 +295,8 @@ function draw() {
       //check if cart has picked up an item
       var d2 = dist(x,y,itemX,itemY);
       if ( d2 < 40) {
-        itemX = random(0, width);
-        itemY = random(0, height);
+        itemX = random(0, width-150);
+        itemY = random(0, height-150);
         numItems++;
         rand = int(random(0,supplies.length));
         // grabItem_sound.play();
