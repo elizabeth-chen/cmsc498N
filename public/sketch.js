@@ -145,8 +145,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  socket = io.connect('http://cleft.fun:30000');
-  // socket = io.connect('http://localhost:30000');
+  // socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -252,25 +252,6 @@ function draw() {
       background(255);
       skipButton.hide();
 
-
-      //zoom out
-      // if(marks.length == 100) {
-      //   button_mouse.hide();
-      //   button_key.hide();
-      //   if(scaleCount > .5) {
-      //     scale(scaleCount);
-      //     scaleCount=scaleCount-.007;
-      //     imageOpacity=imageOpacity-7;
-      //   } else {
-      //     scale(scaleCount);
-      //     showEndScreen();
-      //     screen = 3;
-      //   }
-      // }
-
-      // drawFrame();
-
-
     push(); //------------WORLD SCROLLING SET UP--------
     translate(worldOffset.x/5,worldOffset.y/5);
       drawFrame();
@@ -282,8 +263,8 @@ function draw() {
       if ( !foundItem && d2 < 40) {
         numItems++;
         var newItem = {
-          x: random(50, 500),
-          y: random(50, 500),
+          x: random(50, windowWidth-canvasSize),
+          y: random(50, windowHeight-canvasSize),
           type: int(random(0,supplies.length)),
         };
 
