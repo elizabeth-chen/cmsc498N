@@ -18,7 +18,7 @@ var hasMost = false;
 var myPos;
 var worldOffset;
 var worldBoundsMin,worldBoundsMax;
-var canvasSize = 300;
+var canvasSize = 250;
 var screen = 0, mode = 1;
 var s = 0;
 
