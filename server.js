@@ -23,8 +23,8 @@ var marks = [];
 var mostItems = 0;
 
 var item = {
-  x: parseInt(Math.random(100, 200)),
-  y: parseInt(Math.random(100, 200)),
+  x: parseInt(Math.random(400, 500)),
+  y: parseInt(Math.random(400, 500)),
   type: parseInt(Math.random(0, 6))
 }
 
