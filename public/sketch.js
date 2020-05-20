@@ -4,6 +4,7 @@ var openSimplex;
 //server variables
 var users = [];
 var marks = [];
+var endMarks = [];
 
 //game play variables
 var supplies = [];
@@ -144,8 +145,8 @@ function setup() {
   markTypes.push(mark5);
   markTypes.push(mark6);
 
-  socket = io.connect('http://cleft.fun:30000');
-  // socket = io.connect('http://localhost:30000');
+  //socket = io.connect('http://cleft.fun:30000');
+  socket = io.connect('http://localhost:30000');
 
   //initial cart
   var data = {
@@ -366,7 +367,6 @@ function draw() {
 
       //draw marks
       for (var i = marks.length - 1; i >= 0; i--) {
-          // rotate(marks[i].angle);
           image(markTypes[marks[i].type], marks[i].x, marks[i].y, 160,160);
       }
 
@@ -481,8 +481,18 @@ function draw() {
     }
 
   //end of game screen
-  } else {
+} else if (screen == 4) {
+  background(255);
+  scale(scaleCount);
+
+  //draw marks
+  for (var i = endMarks.length - 1; i >= 0; i--) {
+      image(markTypes[endMarks[i].type], endMarks[i].x, endMarks[i].y, 160,160);
+  }
+  button_key.show();
+} else {
     background(255);
+
     scale(scaleCount);
 
     //draw marks
@@ -497,6 +507,8 @@ function draw() {
       scaleCount=scaleCount-.007;
       imageOpacity=imageOpacity-7;
     } else {
+      endMarks = marks;
+      screen = 4;
       button_key.show();
     }
 
@@ -534,7 +546,7 @@ function drawCart(x, y, dir, items, isWinning){
   }
 }
 
-// draw person next to current user 
+// draw person next to current user
 function drawPerson(x, y, dir) {
   if(dir == "right") {
     image(r_man, x-60, y-14, 100, 100);
