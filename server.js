@@ -83,7 +83,7 @@ io.sockets.on('connection',
       }
 
       //check to make sure user is not null (getting error when game first loads if we don't check for this, probably something to look into later on)
-      if(user) {
+      if(user && data) {
         if(data.items >= mostItems && data.items != 0) {
           user.isWinning = true;
           mostItems = data.items;

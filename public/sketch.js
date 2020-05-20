@@ -18,7 +18,7 @@ var hasMost = false;
 var myPos;
 var worldOffset;
 var worldBoundsMin,worldBoundsMax;
-var canvasSize = 500;
+var canvasSize = 350;
 var screen = 0, mode = 1;
 var s = 0;
 
@@ -278,6 +278,7 @@ function draw() {
       //   }
       // }
 
+      drawFrame();
       trackItems();
       testArrow.display();
     
@@ -285,14 +286,16 @@ function draw() {
     push(); //------------WORLD SCROLLING SET UP--------
     // translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
     translate(worldOffset.x/4,worldOffset.y/4);
+
+    drawFrame();
       
       
 
       //check if cart has picked up an item
       var d2 = dist(x,y,itemX,itemY);
       if ( d2 < 40) {
-        itemX = random(-canvasSize+200, canvasSize-200);
-        itemY = random(-canvasSize+200, canvasSize-200);
+        itemX = random(0, width);
+        itemY = random(0, height);
         numItems++;
         rand = int(random(0,supplies.length));
         // grabItem_sound.play();
@@ -499,14 +502,6 @@ function draw() {
 
     // push();
 
-  
-
-      fill(0);
-      square(-canvasSize, -canvasSize, canvasSize, canvasSize*2+width);   //left
-      square(-canvasSize, -canvasSize, canvasSize*2+width, canvasSize);   //up
-
-      square(-canvasSize, height, canvasSize*2+width, canvasSize);      //down
-      square(width, -canvasSize, canvasSize, canvasSize*2+width);  //right
     
                             /// BOUNDS 
     translate(worldOffset.x+(width/2),worldOffset.y+(height/2));
@@ -652,7 +647,7 @@ function collision(x1,y1,x2,y2) {
 //Item text
 function trackItems(){
 	textSize(20);
-	fill(0);
+	fill(19, 166, 8);
 	textFont('Helvatica');
 	text(("Items: "+ numItems), (windowWidth/4), 30);
   text(("Players: "+ users.length ), (windowWidth- windowWidth/3.2), 30);
@@ -691,6 +686,7 @@ class Arrow {
 	}
 
 	update() {
+    fill(19, 166, 8);
 		arrowVal = atan2(itemY - y,	itemX - x)
 	}
 
@@ -706,10 +702,11 @@ class Arrow {
 
 function drawFrame(){
   fill(0);
-  rectangle(0-canvasSize, 0-canvasSize, canvasSize*2+width, canvasSize);
-  // rectangle(0, windowHeight, canvasSize, canvasSize);
-  // rectangle(0-canvasSize, 0-canvasSize, windowWidth, windowHeight);
-  // rectangle(0-canvasSize, 0-canvasSize, windowWidth, windowHeight);
+  square(-canvasSize, -canvasSize, canvasSize, canvasSize*2+width);   //left
+  square(-canvasSize, -canvasSize, canvasSize*2+width, canvasSize);   //up
+
+  square(-canvasSize, height, canvasSize*2+width, canvasSize);      //down
+  square(width, -canvasSize, canvasSize, canvasSize*2+width);  //right
 }
 
 function windowResized() {
