@@ -357,7 +357,9 @@ function draw() {
             pop();
           }
           else {
-            drawCart(users[i].x, users[i].y, users[i].dir, users[i].items, users[i].isWinning);
+            nX = x*windowWidth;
+            nY = y*windowHeight;
+            drawCart(nX, nY, users[i].dir, users[i].items, users[i].isWinning);
           }
         }
       } //end draw all the carts
@@ -469,10 +471,12 @@ function draw() {
       y = windowHeight -100
     }
 
+    nX = x/windowWidth;
+    nY = y/windowHeight;
     //current cart's data to send to the server
     var cartData = {
-      x: x-(windowWidth/2)-worldOffset.x,
-      y: y-(windowHeight/2)-worldOffset.y,
+      x: nX,
+      y: nY,
       dir: dir,
       items: numItems,
     };
